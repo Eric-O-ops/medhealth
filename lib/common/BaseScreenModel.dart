@@ -43,22 +43,4 @@ abstract class BaseScreenModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  static Future<R?> navigateTo<T extends BaseScreenModel, R>({
-    required BuildContext context,
-    required Widget screen,
-    required T Function() createModel,
-  }) {
-    final model = createModel();
-    model.initialize();
-
-     return Navigator.of(context).push<R>(
-      MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider.value(
-          value: model,
-          child: screen,
-        ),
-      ),
-    );
-  }
 }

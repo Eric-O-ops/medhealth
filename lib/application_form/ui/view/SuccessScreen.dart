@@ -14,10 +14,10 @@ class SuccessScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/success.png', // Точный путь к файлу
-              width: 167, // Опционально: задать ширину
-              height: 167, // Опционально: задать высоту
-              fit: BoxFit.contain, // Опционально: как масштабировать картинку
+              'assets/images/success.png',
+              width: 167,
+              height: 167,
+              fit: BoxFit.contain,
             ),
 
             SizedBox(height: 20),

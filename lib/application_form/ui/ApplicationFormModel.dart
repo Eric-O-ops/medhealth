@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:medhealth/application_form/ui/success_screen/SuccessScreen.dart';
 import 'package:medhealth/common/BaseScreenModel.dart';
-
 import '../model/ApplicationFromDto.dart';
 import '../rep/ApplicationFormRep.dart';
 
