@@ -45,6 +45,29 @@ class BaseApi {
       return Response(code: 1, body: null);
     }
   }
+
+  Future<Response> patch(String endpoint, Map<String, dynamic> putData) async {
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(putData),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return Response(code: response.statusCode, body: null);
+      } else {
+        return Response(code: response.statusCode, body: null);
+      }
+    } catch (e) {
+      return Response(code: 1, body: null);
+    }
+  }
+
 }
 
 class Response {

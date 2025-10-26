@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:medhealth/styles/app_colors.dart';
+import '../../styles/app_colors.dart';
 
 Widget CustomTextFuild({
   required String label,
   required String hintText,
   int? maxLines = 1,
+  required String? Function(String?) validator,
   required void Function(String? value) onChanged,
+  TextInputType? keyboardType,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,14 +24,18 @@ Widget CustomTextFuild({
         ),
       ),
 
-      SizedBox(height: 2),
+      TextFormField(
+        validator: validator,
 
-      TextField(
         onChanged: (String? value) => onChanged(value),
 
         minLines: 1,
         maxLines: maxLines,
-        keyboardType: (maxLines == null) ? TextInputType.multiline : TextInputType.text,
+        keyboardType:
+            keyboardType ??
+            ((maxLines == null || maxLines! > 1)
+                ? TextInputType.multiline
+                : TextInputType.text),
 
         style: TextStyle(
           color: AppColors.blue,
@@ -47,18 +53,28 @@ Widget CustomTextFuild({
 
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(
-              color: AppColors.lightBlue,
-              width: 1.5,
-            ),
+            borderSide: BorderSide(color: AppColors.lightBlue, width: 1.5),
           ),
 
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2.0,
-            ),
+            borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+          ),
+
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
+
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Colors.red, width: 2.0),
+          ),
+
+          errorStyle: const TextStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
           ),
         ),
       ),

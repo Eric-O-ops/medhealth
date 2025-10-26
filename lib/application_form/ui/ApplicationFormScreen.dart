@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:medhealth/application_form/ui/success_screen/SuccessScreen.dart';
-import 'package:medhealth/application_form/ui/view/CustomTextField.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:medhealth/application_form/ui/view/SuccessScreen.dart';
+import 'package:medhealth/common/view/CustomTextField.dart';
 import 'package:medhealth/common/BaseScreen.dart';
 
+import '../../common/validator/TextFieldValidator.dart';
 import '../../styles/app_colors.dart';
 import 'ApplicationFormModel.dart';
 
@@ -12,96 +13,96 @@ class ApplicationFormScreen extends StatefulWidget {
   _ApplicationFormScreenState createState() => _ApplicationFormScreenState();
 }
 
-class _ApplicationFormScreenState extends BaseScreen<ApplicationFormScreen , ApplicationFormModel> {
+class _ApplicationFormScreenState
+    extends BaseScreen<ApplicationFormScreen, ApplicationFormModel> {
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget buildBody(BuildContext context, ApplicationFormModel viewModel) {
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            'assets/images/Logo.svg',
-            width: 115,
-            height: 77,
-          ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset('assets/images/Logo.svg', width: 115, height: 77),
 
-          SizedBox(height: 8),
+            SizedBox(height: 8),
 
-          Text(
-            'Заявка на добавление\n частной клиники в систему',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
-          ),
+            Text(
+              'Заявка на добавление\n частной клиники в систему',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+            ),
 
-          SizedBox(height: 8),
+            SizedBox(height: 20),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Имя',
               hintText: 'Введите имя',
+              validator: Validator.validateName,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.firstName = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.firstName = value;
+              },
+            ),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Фамилия',
               hintText: 'Введите фамилию',
+              validator: Validator.validateName,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.lastName = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.lastName = value;
+              },
+            ),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Название клиники',
               hintText: 'Введите название клиники',
+              validator: (value) =>
+                  (value == null || value.isEmpty) ? 'Поле обязательно.' : null,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.nameClinic = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.nameClinic = value;
+              },
+            ),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Email',
               hintText: 'Введите email',
+              keyboardType: TextInputType.emailAddress,
+              validator: Validator.validateEmail,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.email = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.email = value;
+              },
+            ),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Телефон',
               hintText: 'Введите телефон',
+              keyboardType: TextInputType.phone,
+              validator: Validator.validatePhoneNumber,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.phoneNumber = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.phoneNumber = value;
+              },
+            ),
 
-          CustomTextFuild(
+            CustomTextFuild(
               label: 'Описание',
               hintText: 'Введите описание',
               maxLines: null,
+              keyboardType: TextInputType.multiline,
+              validator: (value) => (value == null || value.isEmpty)
+                  ? 'Пожалуйста, введите описание.'
+                  : null,
               onChanged: (String? value) {
-                if (value != null) {
-                  viewModel.description = value;
-                }
-              }
-          ),
+                if (value != null) viewModel.description = value;
+              },
+            ),
 
-          SizedBox(height: 8),
+            SizedBox(height: 8),
 
-          MaterialButton(
+            MaterialButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -116,23 +117,30 @@ class _ApplicationFormScreenState extends BaseScreen<ApplicationFormScreen , App
                 ),
               ),
               onPressed: () {
-                viewModel.sentApplicationForm(
+                if (_formKey.currentState!.validate()) {
+                  viewModel.sentApplicationForm(
                     onSuccess: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SuccessScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => SuccessScreen(),
+                        ),
                       );
                     },
                     onError: () {
-                      print("error");
-                    }
-                );
-              })
-        ],
-      )
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Ошибка отправки заявки.'),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
     );
-
   }
 }
-
-

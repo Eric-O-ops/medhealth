@@ -5,4 +5,5 @@ class AppColors {
   static const Color lightBlue = Color(0x4D1C9AEA);
   static const Color hintBlue = Color(0xC81C9AEA);
   static const Color wight = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
 }
