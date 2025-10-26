@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/application_form/ui/ApplicationFormModel.dart';
+import 'package:medhealth/fake_main/ui/FakeMain.dart';
+import 'package:provider/provider.dart';
 
 import 'application_form/ui/ApplicationFormScreen.dart';
 
@@ -16,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: ApplicationForm()
+      home: FakeMain()
     );
   }
 }
