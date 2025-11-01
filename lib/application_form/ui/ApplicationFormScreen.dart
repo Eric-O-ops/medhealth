@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:medhealth/application_form/ui/view/SuccessScreen.dart';
+import 'package:medhealth/common/view/CommonCompliteScreen.dart';
 import 'package:medhealth/common/view/CustomTextField.dart';
 import 'package:medhealth/common/BaseScreen.dart';
 
@@ -123,7 +123,7 @@ class _ApplicationFormScreenState
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SuccessScreen(),
+                          builder: (context) => CommonCompleteScreen(title: "Заявка успешно отправлена!"),
                         ),
                       );
                     },

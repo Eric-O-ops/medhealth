@@ -35,7 +35,6 @@ class ChangePasswordModel extends BaseScreenModel {
     _rep.changePassword(email, password);
   }
 
-
   @override
   Future<void> onInitialization() async {}
 
