@@ -28,10 +28,13 @@ abstract class BaseScreen<S extends StatefulWidget, VM extends BaseScreenModel>
       body: Consumer<VM>(
         builder: (context, viewModel, child) {
           return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: buildBody(context, viewModel),
-            ),
+            child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: buildBody(context, viewModel),
+                  //todo need add column widget
+                ),
+            )
           );
         },
       ),

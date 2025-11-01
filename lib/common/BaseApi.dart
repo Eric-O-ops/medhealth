@@ -67,6 +67,20 @@ class BaseApi {
       return Response(code: 1, body: null);
     }
   }
+  Future<Response> delete(String endpoint) async {
+    final url = Uri.parse("$baseUrl$endpoint");
+
+    try {
+      final response = await http.delete(url);
+      if (response.statusCode == 204) {
+        return Response(code: response.statusCode, body: null);
+      } else {
+        return Response(code: response.statusCode, body: null);
+      }
+    } catch (e) {
+      return Response(code: 1, body: null);
+    }
+  }
 
 }
 
