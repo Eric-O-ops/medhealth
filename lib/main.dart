@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/Marlen/login_screen/ui/view/SplashScreen.dart';
+import 'package:medhealth/Marlen/owner_main_screen/OwnerMainScreen.dart';
+import 'package:medhealth/Marlen/user_main/UserMainScreen.dart';
 import 'package:medhealth/fake_main/ui/FakeMain.dart';
+import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +17,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: SafeArea(
-          child: FakeMain()
+      routes: {
+        '/ownerMain': (context) => const Ownermainscreen(),
+        '/userMain': (context) => const Usermainscreen(),
+        '/recovery': (context) => RecoveryPasswordScreen(),
+      },
+      home: SplashScreen(
+          // child: FakeMain()
       ),
     );
   }
