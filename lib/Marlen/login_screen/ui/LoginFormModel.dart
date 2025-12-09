@@ -9,13 +9,15 @@ class LoginFormModel extends BaseScreenModel {
   bool isHidden = true;
 
   Future<String?> login() async {
-    final owners = await _rep.getOwners();
-    for (var owner in owners) {
-      if (owner.email == email && owner.passwordUser == password) {
-        return owner.role;
+    final users = await _rep.getUsers();
+
+    for (var user in users) {
+      if (user.email == email && user.passwordUser == password) {
+        return user.role; // Возвращаем роль найденного пользователя
       }
     }
-    return null;
+
+    return null; // пользователь не найден
   }
 
   void togglePasswordVisibility() {

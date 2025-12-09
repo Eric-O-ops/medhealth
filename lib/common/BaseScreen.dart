@@ -25,6 +25,7 @@ abstract class BaseScreen<S extends StatefulWidget, VM extends BaseScreenModel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Consumer<VM>(
         builder: (context, viewModel, child) {
           return Center(

@@ -27,7 +27,16 @@ class _ApplicationFormScreenState
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SvgPicture.asset('assets/images/Logo.svg', width: 115, height: 77),
+            Align(alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                iconSize: 28,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            SvgPicture.asset('assets/images/Logo.svg', height: 110),
 
             SizedBox(height: 8),
 

@@ -7,6 +7,6 @@ class RecoveryPasswordApi extends BaseApi {
   }
 
   Future<Response> changePassword(String id, String password) {
-    return patch("api/users/$id/", {"password_user ": password});
+    return patch("api/users/$id/", {"password_user": password});
   }
 }

@@ -10,11 +10,10 @@ class LoginUserDto {
   });
 
   factory LoginUserDto.fromJson(Map<String, dynamic> json) {
-    final user = json['user'];
     return LoginUserDto(
-      email: user['email'] ?? '',
-      passwordUser: user['password_user'] ?? '',
-      role: user['role'] ?? '',
+      email: json['email'] ?? '',
+      passwordUser: json['password_user'] ?? '',
+      role: json['role'] ?? '',
     );
   }
 }
