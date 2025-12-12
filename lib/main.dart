@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/fake_main/ui/FakeMain.dart';
 
+import 'http/HttpRequest.dart';
+
 void main() {
+  setUpDioHttpRequest();
   runApp(const MyApp());
 }
 

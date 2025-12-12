@@ -25,14 +25,14 @@ abstract class BaseScreen<S extends StatefulWidget, VM extends BaseScreenModel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Consumer<VM>(
         builder: (context, viewModel, child) {
           return Center(
             child: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: buildBody(context, viewModel),
-                  //todo need add column widget
+                  child: buildBody(context, viewModel)
                 ),
             )
           );

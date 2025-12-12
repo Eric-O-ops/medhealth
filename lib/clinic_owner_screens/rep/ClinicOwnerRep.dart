@@ -33,7 +33,7 @@ class ClinicOwnerRep {
 
   Future<bool> postBranches(String address) async {
     final description = "some description";
-    final clinicOwner = 6;
+    final clinicOwner = 3;
 
     final postData = {
       "address": address,

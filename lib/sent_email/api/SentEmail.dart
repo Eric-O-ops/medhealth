@@ -3,14 +3,26 @@ import 'package:mailer/smtp_server.dart';
 
 class SentEmail {
 
-  final String email;
-  final String subject;
-  final String body;
+  String email = "";
+  String subject = "";
+  String body = "";
 
-  SentEmail({required this.email, required this.subject, required this.body});
+  SentEmail setEmail(String value) {
+    email = value;
+    return this;
+  }
+
+  SentEmail setSubject(String value) {
+    subject = value;
+    return this;
+  }
+
+  SentEmail setBody(String value) {
+    body = value;
+    return this;
+  }
 
   bool sent() {
-
     final smtpServer = SmtpServer (
       'localhost',
       port: 1025,

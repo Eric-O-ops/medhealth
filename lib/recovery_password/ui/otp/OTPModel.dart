@@ -24,11 +24,11 @@ class OTPModel extends BaseScreenModel {
 
     otpCode = OTPCodeGenerator.generateOTP();
 
-    SentEmail(
-        email: email,
-        subject: 'Код для восстановления пароля',
-        body: 'Никому не показывайте код: $otpCode'
-    ).sent();
+    SentEmail()
+    .setEmail(email)
+    .setSubject('Код для восстановления пароля')
+    .setBody('Никому не показывайте код: $otpCode')
+    .sent();
 
   }
 
@@ -45,11 +45,12 @@ class OTPModel extends BaseScreenModel {
   void sentCodeAgain() {
     otpCode = OTPCodeGenerator.generateOTP();
 
-    SentEmail(
-        email: email,
-        subject: 'Код для восстановления пароля',
-        body: 'Никому не показывайте код: $otpCode'
-    ).sent();
+    SentEmail()
+    .setEmail(email)
+    .setSubject('Код для восстановления пароля')
+    .setBody('Никому не показывайте код: $otpCode')
+    .sent();
+
     isSentCodeAgain = false;
   }
 
