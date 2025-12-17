@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/doctor/doctor_dashboard/ui/view/AppointmentDecisionDialogDoctor.dart';
 import 'package:medhealth/doctor/doctor_dashboard/ui/view/BookTimeDialogDoctor.dart';
 import 'package:medhealth/doctor/doctor_dashboard/ui/view/DoctorTimeSlotsWidget.dart';
 import 'package:medhealth/patient_appointment/dashboard/ui/view/PatientTimeSlotsWidget.dart';
@@ -18,12 +19,8 @@ class DoctorDashboardScreen extends StatefulWidget {
 
 class DoctorDashboardScreenState
     extends BaseScreen<DoctorDashboardScreen, DoctorDashboardScreenModel> {
-
   @override
-  Widget buildBody(
-    BuildContext context,
-    DoctorDashboardScreenModel viewModel,
-  ) {
+  Widget buildBody(BuildContext context, DoctorDashboardScreenModel viewModel) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -65,11 +62,12 @@ class DoctorDashboardScreenState
             ),
           ),
 
-          if (viewModel.isLoading) CircularProgressIndicator()
-          else DoctorSlotsWidget(
+          if (viewModel.isLoading)
+            CircularProgressIndicator()
+          else
+            DoctorSlotsWidget(
               status: viewModel.status,
               onTimeSelected: (String time) async {
-
                 if (viewModel.isNotFree(time)) {
                   await showDialog<AppointmentData>(
                     context: context,
@@ -80,6 +78,23 @@ class DoctorDashboardScreenState
                         appointmentData: viewModel.getAppointmentByTime(time),
                       );
                     },
+                  );
+                }
+              },
+              onTimeSelectedLong: (String time) async {
+                if (viewModel.isNotFree(time)) {
+                  await showDialog(
+                    context: context,
+                    builder: (_) => AppointmentDecisionDialogDoctor(
+                      title: "Приём пациента",
+                      data: viewModel.getPatientAppointmentFullData(time),
+                      onNoShow: () {
+                        viewModel.setAppointmentAsNoShow(time);
+                      },
+                      onCompleted: () {
+                        viewModel.setAppointmentAsCompleted(time);
+                      },
+                    ),
                   );
                 }
               },

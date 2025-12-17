@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:medhealth/doctor/doctor_dashboard/dto/PatientAppointmentUi.dart';
 import 'package:medhealth/doctor/doctor_dashboard/ui/view/PatientAppointmentStatus.dart';
 
@@ -6,6 +7,47 @@ import 'package:intl/intl.dart' show DateFormat;
 
 class DoctorDashboardRep {
   final _api = DoctorDashboardApi();
+
+
+  Future<bool> setAppointmentAsCompleted({
+    required int doctorId,
+    required String patientId,
+    required DateTime date,
+    required String time,
+  }) async {
+    final response = await _api.setAppointmentAsCompleted(
+      doctorId: doctorId,
+      patientId: patientId,
+      date: getDate(dataTime: date),
+      time: time,
+    );
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<bool> setAppointmentAsNoShow({
+    required int doctorId,
+    required String patientId,
+    required DateTime date,
+    required String time,
+  }) async {
+    final response = await _api.setAppointmentAsNoShow(
+      doctorId: doctorId,
+      patientId: patientId,
+      date: getDate(dataTime: date),
+      time: time,
+    );
+
+    if(response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   Future<List<PatientAppointmentUi>> getDoctorAppointments({
     required String doctorId,

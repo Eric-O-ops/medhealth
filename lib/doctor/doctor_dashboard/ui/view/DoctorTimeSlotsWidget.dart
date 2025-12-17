@@ -5,11 +5,13 @@ import 'PatientAppointmentStatus.dart';
 class DoctorSlotsWidget extends StatelessWidget {
   final Map<String, PatientAppointmentStatus> status;
   final Function(String time) onTimeSelected;
+  final Function(String time) onTimeSelectedLong;
 
   DoctorSlotsWidget({
     super.key,
     required this.status,
     required this.onTimeSelected,
+    required this.onTimeSelectedLong,
   });
 
   final List<String> times = [
@@ -90,6 +92,9 @@ class DoctorSlotsWidget extends StatelessWidget {
             return GestureDetector(
               onTap: () {
                 onTimeSelected(time);
+              },
+              onLongPress: () {
+                onTimeSelectedLong(time);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 22, vertical: 14),
