@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 abstract class BaseScreenModel extends ChangeNotifier {
   bool _isLoading = false;
@@ -42,23 +41,5 @@ abstract class BaseScreenModel extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  static Future<R?> navigateTo<T extends BaseScreenModel, R>({
-    required BuildContext context,
-    required Widget screen,
-    required T Function() createModel,
-  }) {
-    final model = createModel();
-    model.initialize();
-
-     return Navigator.of(context).push<R>(
-      MaterialPageRoute(
-        builder: (context) => ChangeNotifierProvider.value(
-          value: model,
-          child: screen,
-        ),
-      ),
-    );
   }
 }

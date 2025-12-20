@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/fake_main/ui/FakeMain.dart';
 
-import 'application_form/ui/ApplicationFormScreen.dart';
+import 'http/HttpRequest.dart';
 
 void main() {
+  setUpDioHttpRequest();
   runApp(const MyApp());
 }
 
@@ -16,7 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: ApplicationForm()
+      home: SafeArea(
+          child: FakeMain()
+      ),
     );
   }
 }
@@ -46,42 +50,30 @@ class _ScreenContainerState extends State<ScreenContainer> {
 
   Widget LoadingScreen() {
     return Scaffold(
-        appBar: AppBar(title: Text('Загрузка')),
-        body: Center(child: CircularProgressIndicator())
+      appBar: AppBar(title: Text('Загрузка')),
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 
   Widget MainScreen() {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          items: getListBottomNavBarItems()
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: getListBottomNavBarItems(),
       ),
     );
   }
 
   List<BottomNavigationBarItem> getListBottomNavBarItems() {
-      return const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: 'Главная',
-        ),
+    return const [
+      BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Главная'),
 
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calculate),
-          label: 'Рецептура',
-        ),
+      BottomNavigationBarItem(icon: Icon(Icons.calculate), label: 'Рецептура'),
 
-        BottomNavigationBarItem(
-          icon: Icon(Icons.food_bank),
-          label: 'Продукты',
-        ),
-      ];
-    }
+      BottomNavigationBarItem(icon: Icon(Icons.food_bank), label: 'Продукты'),
+    ];
+  }
 }
