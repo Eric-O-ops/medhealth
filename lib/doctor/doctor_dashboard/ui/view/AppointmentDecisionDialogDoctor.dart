@@ -96,9 +96,11 @@ class AppointmentDecisionDialogDoctor extends StatelessWidget {
                     Navigator.pop(context);
                     onNoShow();
                   },
-                  child: const Text("Пациент не пришел на приём",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    "Пациент не пришел на приём",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
