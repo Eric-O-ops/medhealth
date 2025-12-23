@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/Marlen/login_screen/ui/view/SplashScreen.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainModel.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/model/BranchesModel.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/screens/BranchesScreen.dart';
 import 'package:medhealth/fake_main/ui/FakeMain.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordModel.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordScreen.dart';
@@ -8,7 +11,8 @@ import 'package:provider/provider.dart';
 import 'Marlen/helps_screens/HelpsScreen.dart';
 import 'Marlen/register_patient_screen/ui/RegisterPatientModel.dart';
 import 'Marlen/register_patient_screen/ui/RegisterPatientScreen.dart';
-import 'Marlen/role/admin_main_screen/AdminMainScreen.dart';
+import 'Marlen/role/admin_main_screen/ui/AdminMainModel.dart';
+import 'Marlen/role/admin_main_screen/ui/AdminMainScreen.dart';
 import 'Marlen/role/doctor_main_screen/DoctorMainScreen.dart';
 import 'Marlen/role/manager_main_screen/ManagerMainScreen.dart';
 import 'Marlen/role/owner_main_screen/OwnerMainScreen.dart';
@@ -33,10 +37,10 @@ class MyApp extends StatelessWidget {
       // В файле main.dart
     routes: {
     // 1. Экраны ГЛАВНОГО МЕНЮ (предполагаем, что используют модели)
-    // '/ownerMain': (context) => ChangeNotifierProvider(
-    // create: (_) => OwnerMainModel(), // Используйте вашу модель для Owner
-    // child: OwnerMainScreen(),
-    // ),
+    '/ownerMain': (context) => ChangeNotifierProvider(
+    create: (_) => OwnerMainModel(), // Используйте вашу модель для Owner
+    child: OwnerMainScreen(),
+    ),
     // '/doctorMain': (context) => ChangeNotifierProvider(
     // create: (_) => DoctorMainModel(), // Используйте вашу модель для Doctor
     // child: DoctorMainScreen(),
@@ -45,10 +49,10 @@ class MyApp extends StatelessWidget {
     // create: (_) => ManagerMainModel(), // Используйте вашу модель для Manager
     // child: ManagerMainScreen(),
     // ),
-    // '/adminMain': (context) => ChangeNotifierProvider(
-    // create: (_) => AdminMainModel(), // Используйте вашу модель для Admin
-    // child: AdminMainScreen(),
-    // ),
+    '/adminMain': (context) => ChangeNotifierProvider(
+    create: (_) => AdminMainModel(), // Используйте вашу модель для Admin
+    child: AdminMainScreen(),
+    ),
     '/userMain': (context) => ChangeNotifierProvider(
     create: (_) => UserMainModel(), // Используйте вашу модель для User
     child: UserMainScreen(),

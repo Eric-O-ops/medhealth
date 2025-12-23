@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/Marlen/login_screen/ui/LoginFormScreen.dart';
 import 'package:medhealth/fake_main/ui/FakeMain.dart';
 import '../../../styles/app_colors.dart';
 
@@ -47,7 +48,7 @@ class SuccessPasswordChangedScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => FakeMain()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                         (Route<dynamic> route) => false
                 );
               },

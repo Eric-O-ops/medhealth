@@ -2,8 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:medhealth/Marlen/login_screen/ui/LoginFormScreen.dart';
+import 'package:medhealth/Marlen/role/admin_main_screen/ui/AdminMainModel.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainModel.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainScreen.dart';
 import 'package:medhealth/styles/app_colors.dart';
 import 'package:provider/provider.dart';
+import '../../../role/admin_main_screen/ui/AdminMainScreen.dart';
 import '../LoginFormModel.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -25,9 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => ChangeNotifierProvider<LoginFormModel>(
-              create: (_) => LoginFormModel(),
-              child: const LoginScreen(),
+            // builder: (_) => ChangeNotifierProvider<LoginFormModel>(
+            //   create: (_) => LoginFormModel(),
+            //   child: const LoginScreen(),)//пока закоментировал чтобы сразу переходит на экран админа и там работать
+            builder: (_)=> ChangeNotifierProvider<OwnerMainModel>(
+              create: (_)=>OwnerMainModel(),
+              child: const OwnerMainScreen(),
             ),
           ),
         );
