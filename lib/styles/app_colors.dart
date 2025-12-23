@@ -6,5 +6,6 @@ class AppColors {
   static const Color hintBlue = Color(0xC81C9AEA);
   static const Color wight = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
+  static const Color veryLightBlue = Color(0xFF75C2F6);
   static const Color gray = Color(0xFFF0F5FA);
 }

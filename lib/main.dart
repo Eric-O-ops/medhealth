@@ -21,7 +21,10 @@ import 'Marlen/role/user_main/ui/UserMainScreen.dart';
 import 'application_form/ui/ApplicationFormModel.dart';
 import 'application_form/ui/ApplicationFormScreen.dart';
 
+import 'http/HttpRequest.dart';
+
 void main() {
+  setUpDioHttpRequest();
   runApp(const MyApp());
 }
 
