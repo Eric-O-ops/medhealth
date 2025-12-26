@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medhealth/Marlen/login_screen/ui/view/SplashScreen.dart';
 import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainModel.dart';
 import 'package:medhealth/Marlen/role/owner_main_screen/model/BranchesModel.dart';
-import 'package:medhealth/Marlen/role/owner_main_screen/screens/BranchesScreen.dart';
+import 'package:medhealth/Marlen/role/owner_main_screen/screens/Branches/BranchesScreen.dart';
 import 'package:medhealth/fake_main/ui/FakeMain.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordModel.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordScreen.dart';
@@ -14,7 +14,8 @@ import 'Marlen/register_patient_screen/ui/RegisterPatientScreen.dart';
 import 'Marlen/role/admin_main_screen/ui/AdminMainModel.dart';
 import 'Marlen/role/admin_main_screen/ui/AdminMainScreen.dart';
 import 'Marlen/role/doctor_main_screen/DoctorMainScreen.dart';
-import 'Marlen/role/manager_main_screen/ManagerMainScreen.dart';
+import 'Marlen/role/manager_main_screen/ui/ManagerMainModel.dart';
+import 'Marlen/role/manager_main_screen/ui/ManagerMainScreen.dart';
 import 'Marlen/role/owner_main_screen/OwnerMainScreen.dart';
 import 'Marlen/role/user_main/ui/UserMainModel.dart';
 import 'Marlen/role/user_main/ui/UserMainScreen.dart';
@@ -48,10 +49,10 @@ class MyApp extends StatelessWidget {
     // create: (_) => DoctorMainModel(), // Используйте вашу модель для Doctor
     // child: DoctorMainScreen(),
     // ),
-    // '/managerMain': (context) => ChangeNotifierProvider(
-    // create: (_) => ManagerMainModel(), // Используйте вашу модель для Manager
-    // child: ManagerMainScreen(),
-    // ),
+    '/managerMain': (context) => ChangeNotifierProvider(
+    create: (_) => ManagerMainModel(), // Используйте вашу модель для Manager
+    child: ManagerMainScreen(),
+    ),
     '/adminMain': (context) => ChangeNotifierProvider(
     create: (_) => AdminMainModel(), // Используйте вашу модель для Admin
     child: AdminMainScreen(),

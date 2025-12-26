@@ -24,7 +24,9 @@ abstract class BaseScreenModel extends ChangeNotifier {
   }
 
   Future<void> onInitialization();
-
+  void notify() {
+    notifyListeners();
+  }
   Future<void> initialize() async {
     _isLoading = true;
     notifyListeners();

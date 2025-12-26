@@ -1,4 +1,4 @@
-// import 'package:medhealth/clinic_owner_screens/model/BranchesDto.dart';
+// import 'package:medhealth/clinic_owner_screens/dto/BranchesDto.dart';
 // import 'package:medhealth/clinic_owner_screens/rep/ClinicOwnerRep.dart';
 // import 'package:medhealth/common/BaseScreenModel.dart';
 //

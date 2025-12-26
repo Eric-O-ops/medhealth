@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:medhealth/common/BaseScreenModel.dart';
 import 'package:medhealth/common/BaseApi.dart';
 
-import '../../../../login_screen/model/LoginUserDto.dart';
+import '../../../../login_screen/dto/LoginUserDto.dart';
+
 
 class EditUserModel extends BaseScreenModel {
   final LoginUserDto user;

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/styles/app_colors.dart';
 import 'package:provider/provider.dart';
-// Импортируй созданные ранее экраны создания
+import '../OwnerMainModel.dart';
 import '../model/AddManagerModel.dart';
 import '../model/CreateBranchModel.dart';
-import 'CreateBranchScreen.dart';
-import 'AddManagerScreen.dart';
+import 'Branches/CreateBranchScreen.dart';
+import 'Managers/AddManagerScreen.dart';
 
 class OwnerToolsScreen extends StatelessWidget {
   const OwnerToolsScreen({super.key});
@@ -15,7 +15,10 @@ class OwnerToolsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Добавление", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          "Добавление",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
       ),
@@ -29,15 +32,29 @@ class OwnerToolsScreen extends StatelessWidget {
               subtitle: "Создайте новую точку вашей сети",
               icon: Icons.storefront_outlined,
               color: AppColors.blue,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (_) => CreateBranchModel(),
-                    child: const CreateBranchScreen(),
+              onTap: () {
+                final ownerId = Provider.of<OwnerMainModel>(
+                  context,
+                  listen: false,
+                ).ownerId;
+
+                if (ownerId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("ID владельца не найден")),
+                  );
+                  return;
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                      create: (_) => CreateBranchModel()..setOwnerId(ownerId),
+                      child: const CreateBranchScreen(),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 20),
             _buildBigButton(
@@ -46,15 +63,29 @@ class OwnerToolsScreen extends StatelessWidget {
               subtitle: "Зарегистрируйте сотрудника для филиала",
               icon: Icons.person_add_alt_1_outlined,
               color: Colors.green.shade600,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (_) => AddManagerModel(),
-                    child: const AddManagerScreen(),
+              onTap: () {
+                final ownerId = Provider.of<OwnerMainModel>(
+                  context,
+                  listen: false,
+                ).ownerId;
+
+                if (ownerId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("ID владельца не найден")),
+                  );
+                  return;
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                      create: (_) => AddManagerModel()..setOwnerId(ownerId),
+                      child: const AddManagerScreen(),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -62,13 +93,14 @@ class OwnerToolsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBigButton(BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildBigButton(
+      BuildContext context, {
+        required String title,
+        required String subtitle,
+        required IconData icon,
+        required Color color,
+        required VoidCallback onTap,
+      }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
@@ -90,9 +122,15 @@ class OwnerToolsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(fontSize: 13, color: Colors.grey)),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
                 ],
               ),
             ),

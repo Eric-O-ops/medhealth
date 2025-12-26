@@ -77,7 +77,7 @@
 //                   itemBuilder: (context, index) {
 //                     final branch = viewModel.branches[index];
 //                     return BranchesCard(
-//                       model: branch,
+//                       dto: branch,
 //                       onEdit: (int id) {
 //                         openModalBottomSheet(context, viewModel, id);
 //                       },

@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../../common/BaseScreen.dart';
 import 'package:medhealth/common/validator/TextFieldValidator.dart';
 
+import '../../role/owner_main_screen/OwnerMainModel.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -97,8 +99,18 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
                         // Перенаправление по роли
                         switch (role) {
                           case "owner":
-                            Navigator.pushReplacementNamed(context, '/ownerMain');
-                            break;
+                        final clinicId = viewModel.clinicOwnerId;
+                        print("ID для передачи через аргументы: $clinicId");
+
+                        if (clinicId != null) {
+                        // Передаем clinicId как аргумент
+                        Navigator.pushReplacementNamed(
+                        context,
+                        '/ownerMain',
+                        arguments: clinicId
+                        );
+                        }
+                        break;
 
                           case "doctor":
                             Navigator.pushReplacementNamed(context, '/doctorMain');

@@ -4,6 +4,9 @@ import '../rep/OwnerRep.dart';
 
 class HolidaySettingsModel extends BaseScreenModel {
   final OwnerRep _rep = OwnerRep();
+  void updateOwnerId(int id) {
+    _rep.setOwnerId(id);
+  }
 
   @override
   Future<void> onInitialization() async {
@@ -26,35 +29,32 @@ class HolidaySettingsModel extends BaseScreenModel {
     notifyListeners();
   }
 
-  // Основная функция сохранения
+  final workingHoursController = TextEditingController();
+
   Future<void> saveGlobalSettings(List<int> branchIds, VoidCallback onSuccess) async {
     if (branchIds.isEmpty) return;
 
     isLoading = true;
     notifyListeners();
 
-    // Склеиваем выбранные дни и текст из поля в одну строку
-    String finalHolidayText = "${selectedDays.join(", ")} ${holidayNoteController.text}".trim();
-
     try {
-      // Отправляем запрос в репозиторий
-      final response = await _rep.updateGlobalHolidays(finalHolidayText, branchIds);
+      final Map<String, dynamic> data = {
+        "description": holidayNoteController.text.trim(),
+        "off_days": selectedDays.isEmpty ? "Нет" : selectedDays.join(", "),
+        "working_hours": workingHoursController.text.trim(),
+      };
 
-      // Если хотя бы один запрос прошел успешно (200 или 204)
-      if (response.code == 200 || response.code == 204) {
-        onSuccess();
+      // Выполняем все запросы
+      for (var id in branchIds) {
+        final resp = await _rep.updateBranch(id, data);
+        print("Обновление филиала $id: Код ${resp.code} Тело: ${resp.body}");
       }
+
+      onSuccess();
     } catch (e) {
-      debugPrint("Ошибка при сохранении настроек: $e");
+      print("Ошибка при массовом обновлении: $e");
     } finally {
       isLoading = false;
       notifyListeners();
     }
-  }
-
-  @override
-  void dispose() {
-    holidayNoteController.dispose();
-    super.dispose();
-  }
-}
+  }}

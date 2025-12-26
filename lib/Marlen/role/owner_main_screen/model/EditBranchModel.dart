@@ -17,9 +17,11 @@ class EditBranchModel extends BaseScreenModel {
 
   EditBranchModel({required this.branch}) {
     addressController = TextEditingController(text: branch.address);
-    selectedManagerId = branch.managerId;
   }
-
+  void setOwnerId(int id) {
+    _rep.setOwnerId(id);
+    loadManagers(); // Загружаем менеджеров сразу после получения ID
+  }
   @override
   Future<void> onInitialization() async {
     await loadManagers();

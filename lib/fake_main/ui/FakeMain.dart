@@ -146,14 +146,14 @@
 //             ),
 //             onPressed: () {
 //
-//               final model = BranchesModel();
-//               model.initialize();
+//               final dto = BranchesModel();
+//               dto.initialize();
 //
 //               Navigator.of(context).push(
 //                 MaterialPageRoute(
 //                   builder: (context) =>
 //                       ChangeNotifierProvider.value(
-//                           value: model,
+//                           value: dto,
 //                           child: BranchesScreen()
 //                       ),
 //                 ),

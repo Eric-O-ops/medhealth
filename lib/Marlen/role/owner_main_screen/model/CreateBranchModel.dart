@@ -5,7 +5,9 @@ import '../rep/OwnerRep.dart';
 class CreateBranchModel extends BaseScreenModel {
   final OwnerRep _rep = OwnerRep();
   final addressController = TextEditingController();
-
+  void setOwnerId(int id) {
+    _rep.setOwnerId(id);
+  }
   @override
   Future<void> onInitialization() async {
   }

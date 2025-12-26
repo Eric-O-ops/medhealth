@@ -3,7 +3,7 @@ import 'package:medhealth/common/BaseScreen.dart';
 import 'package:medhealth/common/validator/TextFieldValidator.dart';
 import 'package:medhealth/common/view/CustomTextField.dart';
 import 'package:medhealth/styles/app_colors.dart';
-import '../model/CreateBranchModel.dart';
+import '../../model/CreateBranchModel.dart';
 
 class CreateBranchScreen extends StatefulWidget {
   const CreateBranchScreen({super.key});
@@ -16,7 +16,10 @@ class _CreateBranchScreenState extends BaseScreen<CreateBranchScreen, CreateBran
   @override
   Widget buildBody(BuildContext context, CreateBranchModel viewModel) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Новый филиал")),
+      backgroundColor: Colors.white,
+      appBar: AppBar(title: const Text("Новый филиал"),
+          backgroundColor: Colors.white,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

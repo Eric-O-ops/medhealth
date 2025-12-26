@@ -14,24 +14,41 @@ class AddManagerModel extends BaseScreenModel {
   List<BranchDto> _branches = [];
   int? selectedBranchId;
   List<BranchDto> get branches => _branches;
-
+// Добавляем метод
+  void setOwnerId(int id) {
+    _rep.setOwnerId(id);
+    loadBranches(); // Сразу грузим список для Dropdown
+  }
   @override
   Future<void> onInitialization() async {
+    // На всякий случай сбросим состояние
+    _branches = [];
+    selectedBranchId = null;
     await loadBranches();
   }
 
   Future<void> loadBranches() async {
     isLoading = true;
     notifyListeners();
-    final response = await _rep.fetchBranches();
-    if (response.code == 200 && response.body is List) {
-      _branches = (response.body as List).map((e) => BranchDto.fromJson(e)).toList();
+    try {
+      final response = await _rep.fetchBranches();
+      if (response.code == 200 && response.body is List) {
+        _branches = (response.body as List)
+            .map((e) => BranchDto.fromJson(e))
+            .toList();
+      }
+    } catch (e) {
+      debugPrint("AddManagerModel Error: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-    isLoading = false;
-    notifyListeners();
   }
 
-  Future<void> createManager({required VoidCallback onSuccess, required Function(String) onError}) async {
+  Future<void> createManager({
+    required VoidCallback onSuccess,
+    required Function(String) onError
+  }) async {
     if (selectedBranchId == null) {
       onError("Выберите филиал!");
       return;
@@ -40,14 +57,18 @@ class AddManagerModel extends BaseScreenModel {
     isLoading = true;
     notifyListeners();
 
-    // ВАЖНО: Структура под твой бэкенд
+    // ДОБАВЛЕНЫ ОБЯЗАТЕЛЬНЫЕ ПОЛЯ ДЛЯ DJANGO
     final data = {
       "user": {
-        "email": emailController.text,
-        "password": passwordController.text,
-        "first_name": firstNameController.text,
-        "last_name": lastNameController.text,
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(), // Для авторизации Django
+        "password_user": passwordController.text.trim(),
+        "first_name": firstNameController.text.trim(),
+        "last_name": lastNameController.text.trim(),
         "role": "manager",
+        "phone_number": "0000000000", // Заглушка, если нет поля ввода
+        "date_of_birth": "2000-01-01", // Заглушка
+        "address": "Bishkek",          // Заглушка
       },
       "branch_id": selectedBranchId,
     };
@@ -57,13 +78,25 @@ class AddManagerModel extends BaseScreenModel {
       if (response.code == 201 || response.code == 200) {
         onSuccess();
       } else {
-        onError("Ошибка сервера: ${response.code}");
+        onError("Ошибка сервера: ${response.body}");
       }
     } catch (e) {
-      onError("Ошибка сети");
+      onError("Ошибка сети: $e");
     } finally {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+  void notify() {
+    notifyListeners();
   }
 }

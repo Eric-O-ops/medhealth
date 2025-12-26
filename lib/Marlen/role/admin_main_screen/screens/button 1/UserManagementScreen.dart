@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../application_form/model/ApplicationFromDto.dart';
 import '../../../../../styles/app_colors.dart';
-import '../../../../login_screen/model/LoginUserDto.dart';
+import '../../../../login_screen/dto/LoginUserDto.dart';
 import '../../ui/AdminMainModel.dart';
 import 'EditUserModel.dart';
 import 'EditUserScreen.dart';

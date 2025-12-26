@@ -29,13 +29,13 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            // builder: (_) => ChangeNotifierProvider<LoginFormModel>(
-            //   create: (_) => LoginFormModel(),
-            //   child: const LoginScreen(),)//пока закоментировал чтобы сразу переходит на экран админа и там работать
-            builder: (_)=> ChangeNotifierProvider<OwnerMainModel>(
-              create: (_)=>OwnerMainModel(),
-              child: const OwnerMainScreen(),
-            ),
+            builder: (_) => ChangeNotifierProvider<LoginFormModel>(
+              create: (_) => LoginFormModel(),
+              child: const LoginScreen(),)//пока закоментировал чтобы сразу переходит на экран админа и там работать
+            // builder: (_)=> ChangeNotifierProvider<OwnerMainModel>(
+            //   create: (_)=>OwnerMainModel(),
+            //   child: const OwnerMainScreen(),
+            // ),
           ),
         );
       },

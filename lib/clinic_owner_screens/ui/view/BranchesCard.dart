@@ -1,11 +1,11 @@
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/material.dart';
-// import 'package:medhealth/clinic_owner_screens/model/BranchesDto.dart'
+// import 'package:medhealth/clinic_owner_screens/dto/BranchesDto.dart'
 //     show BranchDto;
 // import 'package:medhealth/styles/app_colors.dart';
 //
 // Widget BranchesCard({
-//   required BranchDto model,
+//   required BranchDto dto,
 //   required Function(int id) onEdit,
 //   required Function(int id) onRemove,
 // }) {
@@ -30,7 +30,7 @@
 //               ),
 //
 //               Text(
-//                 model.address,
+//                 dto.address,
 //                 textAlign: TextAlign.start,
 //                 style: TextStyle(
 //                   fontSize: 12,
@@ -46,14 +46,14 @@
 //             children: [
 //               IconButton(
 //                 onPressed: () {
-//                   onEdit(model.id);
+//                   onEdit(dto.id);
 //                 },
 //                 icon: Image.asset('assets/images/edit_icon.png'),
 //               ),
 //
 //               IconButton(
 //                 onPressed: () {
-//                   onRemove(model.id);
+//                   onRemove(dto.id);
 //                 },
 //                 icon: Image.asset('assets/images/remove_icon.png'),
 //               ),

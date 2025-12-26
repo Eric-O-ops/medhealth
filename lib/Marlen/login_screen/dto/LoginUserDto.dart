@@ -9,6 +9,7 @@ class LoginUserDto {
     required this.email,
     required this.passwordUser,
     required this.role,
+
   });
 
   factory LoginUserDto.fromJson(Map<String, dynamic> json) {

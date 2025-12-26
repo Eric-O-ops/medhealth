@@ -1,6 +1,6 @@
 import '../../../common/BaseApi.dart';
 import '../api/LoginFormApi.dart';
-import '../model/LoginUserDto.dart';
+import '../dto/LoginUserDto.dart';
 
 class LoginFormRep {
   final LoginFormApi _api = LoginFormApi();

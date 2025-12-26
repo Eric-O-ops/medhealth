@@ -8,9 +8,11 @@ class BaseApi {
 
   Future<Response> fetch(String endpoint) async {
     final url = Uri.parse("$baseUrl$endpoint");
+    print("ЗАПРОС GET: $url"); // Добавь это
 
     try {
       final response = await http.get(url);
+      print("ОТВЕТ ОТ СЕРВЕРА (Код): ${response.statusCode}"); // И это
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -19,29 +21,29 @@ class BaseApi {
         return Response(code: response.statusCode, body: null);
       }
     } catch (e) {
+      print("ОШИБКА СЕТИ: $e");
       return Response(code: 1, body: null);
     }
   }
 
   Future<Response> post(String endpoint, Map<String, dynamic> postData) async {
     final url = Uri.parse("$baseUrl$endpoint");
-
     try {
       final response = await http.post(
         url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(postData),
       );
 
-      if (response.statusCode == 201) {
-        final createdData = json.decode(response.body);
-        return Response(code: response.statusCode, body: createdData);
-      } else {
-        return Response(code: response.statusCode, body: null);
+      // МЫ ДОЛЖНЫ ДЕКОДИРОВАТЬ BODY ДАЖЕ ЕСЛИ ОШИБКА 400
+      dynamic responseBody;
+      if (response.body.isNotEmpty) {
+        responseBody = json.decode(response.body);
       }
+
+      return Response(code: response.statusCode, body: responseBody);
     } catch (e) {
+      print("BaseApi Error: $e");
       return Response(code: 1, body: null);
     }
   }

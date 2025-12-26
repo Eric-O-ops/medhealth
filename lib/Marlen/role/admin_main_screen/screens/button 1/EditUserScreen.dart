@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medhealth/common/BaseScreen.dart';
 import 'package:medhealth/common/view/CustomTextField.dart';
 import 'package:medhealth/styles/app_colors.dart';
-import '../../../../login_screen/model/LoginUserDto.dart';
+import '../../../../login_screen/dto/LoginUserDto.dart';
 import 'EditUserModel.dart';
 
 class EditUserScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:medhealth/common/BaseScreenModel.dart';
 import 'package:flutter/material.dart';
 import '../../../../application_form/model/ApplicationFromDto.dart';
 import '../../../../application_form/rep/ApplicationFormRep.dart';
-import '../../../login_screen/model/LoginUserDto.dart';
+import '../../../login_screen/dto/LoginUserDto.dart';
 import '../../../login_screen/rep/LoginFormRep.dart';
 
 class AdminMainModel extends BaseScreenModel {

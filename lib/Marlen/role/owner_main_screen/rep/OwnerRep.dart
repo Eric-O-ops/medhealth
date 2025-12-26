@@ -1,42 +1,68 @@
-import 'package:medhealth/common/BaseApi.dart';
-import '../dto/BranchDto.dart';
-import '../dto/ManagerDto.dart';
+import 'package:dio/dio.dart' hide Response; // Или ваш BaseApi import
+import '../../../../common/BaseApi.dart'; // Убедитесь, что импорт верный
 
 class OwnerRep {
   final BaseApi _api = BaseApi();
+  int? _ownerId;
 
-  Future<Response> fetchBranches() async => _api.fetch("api/branches/");
-
-  Future<Response> createBranch(String address) async {
-    return _api.post("api/branches/", {
-      "address": address,
-      "description": "Новый филиал",
-      "clinic_owner_id": 17 // ID твоего владельца из БД
-    });
+  void setOwnerId(int id) {
+    _ownerId = id;
+    print("OwnerRep настроен на owner_id: $_ownerId");
   }
 
-  Future<Response> updateBranch(int id, Map<String, dynamic> data) async =>
-      _api.patch("api/branches/$id/", data);
+  // --- ФИЛИАЛЫ ---
 
-  Future<Response> deleteBranch(int id) async =>
-      _api.delete("api/branches/$id/");
+  Future<Response> fetchBranches() async {
+    if (_ownerId == null) return Response(code: 200, body: []);
+    // GET запрос списка требует owner_id
+    return _api.fetch("api/branches/?owner_id=$_ownerId");
+  }
 
-  Future<Response> fetchManagers() async => _api.fetch("api/managers/");
+  Future<Response> createBranch(String address) async {
+    final postData = {
+      "address": address,
+      "description": "Филиал",
+      "clinic_owner_id": _ownerId, // Важно: clinic_owner_id
+      "working_hours": "09:00 - 18:00",
+      "off_days": "Сб, Вс"
+    };
+    // POST api/branches/
+    return await _api.post("api/branches/", postData);
+  }
 
-  // Этот метод нужен для AddManagerModel
+  Future<Response> updateBranch(int id, Map<String, dynamic> data) async {
+    // PATCH api/branches/10/ (Слэш в конце обязателен!)
+    // Больше не нужно передавать ?owner_id=... благодаря фиксу на бэке
+    return await _api.patch("api/branches/$id/", data);
+  }
+
+  Future<Response> deleteBranch(int id) async {
+    // DELETE api/branches/10/
+    return await _api.delete("api/branches/$id/");
+  }
+
+  // --- МЕНЕДЖЕРЫ ---
+
+  Future<Response> fetchManagers() async {
+    if (_ownerId == null) return Response(code: 200, body: []);
+    // Правильный URL согласно вашему urls.py
+    return _api.fetch("api/managers/?owner_id=$_ownerId");
+  }
+
   Future<Response> createManager(Map<String, dynamic> data) async {
+    // URL должен быть api/managers/ а не api/clinic_owners/managers/
     return _api.post("api/managers/", data);
   }
 
-  Future<Response> deleteManager(int id) async =>
-      _api.delete("api/users/$id/");
+  Future<Response> deleteManager(int userId) async {
+    // Удаляем через api/users/ID/ так как Manager связан OneToOne с User
+    // Или, если хотите удалять именно запись менеджера: api/managers/ID/
+    // Но судя по коду модели вы хотите удалить User.
+    return await _api.delete("api/users/$userId/");
+  }
 
-  Future<Response> updateGlobalHolidays(String text, List<int> ids) async {
-    int code = 200;
-    for (var id in ids) {
-      final res = await _api.patch("api/branches/$id/", {"description": text});
-      code = res.code;
-    }
-    return Response(code: code, body: {});
+  // Метод для обновления менеджера
+  Future<Response> updateManager(int userId, Map<String, dynamic> data) async {
+    return await _api.patch("api/users/$userId/", data);
   }
 }

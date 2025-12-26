@@ -44,11 +44,6 @@ class SuccessScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => FakeMain()),
-                        (Route<dynamic> route) => false
-                );
               },
             ),
           ],

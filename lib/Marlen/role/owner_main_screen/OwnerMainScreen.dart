@@ -4,8 +4,8 @@ import 'package:medhealth/common/BaseScreen.dart';
 import 'package:medhealth/styles/app_colors.dart';
 
 import 'OwnerMainModel.dart';
-import 'screens/BranchesScreen.dart';
-import 'screens/ManagersListScreen.dart';
+import 'screens/Branches/BranchesScreen.dart';
+import 'screens/Managers/ManagersListScreen.dart';
 import 'screens/OwnerToolsScreen.dart';
 import 'screens/HolidaySettingsScreen.dart';
 
@@ -20,37 +20,58 @@ class OwnerMainScreen extends StatefulWidget {
 }
 
 class _OwnerMainScreenState extends BaseScreen<OwnerMainScreen, OwnerMainModel> {
-
-  // Список экранов теперь создается здесь, чтобы пробросить провайдеры
   late List<Widget> _screens;
+  late BranchesModel branchesModel;
+  late HolidaySettingsModel holidayModel;
 
   @override
   void initState() {
     super.initState();
+    // Создаем модель филиалов
+    branchesModel = BranchesModel();
+    holidayModel = HolidaySettingsModel();
+
     _screens = [
-      ChangeNotifierProvider(
-        create: (_) => BranchesModel(),
+      ChangeNotifierProvider.value(
+        value: branchesModel, // Используем нашу переменную
         child: const BranchesScreen(),
       ),
-      const ManagersListScreen(), // Эта использует общую OwnerMainModel
+      const ManagersListScreen(),
       const OwnerToolsScreen(),
-      ChangeNotifierProvider(
-        create: (_) => HolidaySettingsModel(),
-        child: const HolidaySettingsScreen(),
-      ),
+      ChangeNotifierProvider.value(
+          value: holidayModel,
+          child: const HolidaySettingsScreen()), // Используем её
     ];
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int) {
+        // 1. Настраиваем главную модель (для менеджеров и табов)
+        Provider.of<OwnerMainModel>(context, listen: false).setupOwner(args);
+
+        // 2. Настраиваем модель филиалов
+        branchesModel.updateOwnerId(args);
+        holidayModel.updateOwnerId(args);
+      }
+    });
   }
+
 
   Widget _buildNavItem({required IconData icon, required bool isSelected}) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      width: 60, height: 60,
+      width: 60,
+      height: 60,
       decoration: BoxDecoration(
         color: isSelected ? AppColors.blue : Colors.white,
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.blue.withOpacity(0.5), width: 1),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
         ],
       ),
       child: Icon(icon, color: isSelected ? Colors.white : AppColors.blue, size: 32),
@@ -60,7 +81,7 @@ class _OwnerMainScreenState extends BaseScreen<OwnerMainScreen, OwnerMainModel> 
   @override
   Widget buildBody(BuildContext context, OwnerMainModel viewModel) {
     return Scaffold(
-      backgroundColor: AppColors.wight,
+      backgroundColor: AppColors.wight, // Проверь название: обычно white, а не wight
       body: IndexedStack(
         index: viewModel.selectedIndex,
         children: _screens,
@@ -69,7 +90,7 @@ class _OwnerMainScreenState extends BaseScreen<OwnerMainScreen, OwnerMainModel> 
         padding: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
           color: AppColors.gray,
-          borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+          borderRadius:  BorderRadius.circular(30),
         ),
         child: SafeArea(
           child: Padding(
