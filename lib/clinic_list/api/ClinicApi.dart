@@ -13,8 +13,6 @@ class ClinicApi extends BaseApi {
     List<String> clinicName,
     List<String> specialization,
   ) {
-    final temp = specialization.join(',');
-    print(temp);
 
     return fetch(
       "api/branch-filters/?clinic_name=${clinicName.join(',')}&specialization=${specialization.join(',')}",

@@ -8,7 +8,7 @@ import 'package:medhealth/doctor/doctor_dashboard/ui/view/PatientAppointmentStat
 class DoctorDashboardScreenModel extends BaseScreenModel {
   DoctorDashboardScreenModel();
 
-  final String idDoctor = "1";
+  final String idDoctor = "3";
   List<PatientAppointmentUi> appointments = [];
 
   final _rep = DoctorDashboardRep();
