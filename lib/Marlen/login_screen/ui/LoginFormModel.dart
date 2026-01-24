@@ -1,3 +1,5 @@
+import 'package:medhealth/common/RAM.dart';
+
 import '../../../common/BaseApi.dart';
 import '../../../common/BaseScreenModel.dart';
 import '../dto/LoginUserDto.dart';
@@ -18,6 +20,9 @@ class LoginFormModel extends BaseScreenModel {
     for (var user in users) {
       if (user.email == email && user.passwordUser == password) {
         currentUser = user;
+
+        Ram().userId = user.id.toString();
+
 
         // Если это владелец, ищем его clinic_owner_id
         if (user.role == 'owner') {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/styles/app_colors.dart';
+import '../../../../common/RAM.dart';
 import '../../manager_main_screen/dto/DoctorDto.dart';
 import '../../manager_main_screen/rep/ManagerRep.dart';
 
@@ -184,7 +185,8 @@ class _PatientDoctorsListScreenState extends State<PatientDoctorsListScreen> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                // TODO: Навигация на выбор даты
+                Ram().doctorId = doctor.id.toString();
+                Navigator.pushNamed(context, "/patientDashboard");
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blue,
