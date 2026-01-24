@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:medhealth/common/RAM.dart';
 import 'package:medhealth/patient_appointment/dashboard/rep/PatientDashboardRep.dart';
 import 'package:medhealth/patient_appointment/dashboard/ui/view/StatusRegistration.dart';
 
@@ -8,6 +11,7 @@ class PatientDashboardScreenModel extends BaseScreenModel {
   PatientDashboardScreenModel({required this.idDoctor});
 
   final String idDoctor;
+  final String idPatient = Ram().userId;
   String symptomsDescription = "";
   String selfTreatmentMethodsTaken = "";
 
@@ -106,7 +110,7 @@ class PatientDashboardScreenModel extends BaseScreenModel {
       selfTreatmentMethodsTaken: selfTreatmentMethodsTaken,
     );
 
-    _rep.removePatientAppointment(patientAppointment, 12);
+    _rep.removePatientAppointment(patientAppointment, int.parse(idPatient));
     status[time] = StatusRegistration.free; //todo [StatusRegistration.free]
 
     notifyListeners();

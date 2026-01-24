@@ -25,16 +25,24 @@ abstract class BaseScreen<S extends StatefulWidget, VM extends BaseScreenModel>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Consumer<VM>(
         builder: (context, viewModel, child) {
           return Center(
             child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: buildBody(context, viewModel)
-                ),
-            )
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: buildBody(context, viewModel),
+              ),
+            ),
           );
         },
       ),

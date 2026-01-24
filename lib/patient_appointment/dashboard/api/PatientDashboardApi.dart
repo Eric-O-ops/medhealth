@@ -10,6 +10,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:medhealth/common/RAM.dart';
 
 import '../../../http/HttpRequest.dart';
 import '../dto/PatientAppointmentDoctorDto.dart';
@@ -35,7 +36,7 @@ class PatientDashboardApi {
 
     return dioHttpRequest.post('api/appointments/register', data: {
       'doctorId': patientAppointment.doctorId,
-      'patientId': 12,
+      'patientId': int.parse(Ram().userId),
       'date': patientAppointment.date,
       'time': {
         "hour": hour,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/Marlen/login_screen/ui/view/SplashScreen.dart';
 import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainModel.dart';
+import 'package:medhealth/patient_appointment/dashboard/ui/PatientDashboardScreen.dart';
+import 'package:medhealth/patient_appointment/dashboard/ui/PatientDashboardScreenModel.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordModel.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordScreen.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,7 @@ import 'Marlen/role/user_main/ui/UserMainScreen.dart';
 import 'application_form/ui/ApplicationFormModel.dart';
 import 'application_form/ui/ApplicationFormScreen.dart';
 
+import 'common/RAM.dart';
 import 'http/HttpRequest.dart';
 
 void main() {
@@ -70,6 +73,13 @@ class MyApp extends StatelessWidget {
     create: (_) => RegisterPatientModel(),
     child: const RegisterPatientScreen(),
     ),
+
+    '/patientDashboard': (context) => ChangeNotifierProvider(
+      create: (_) => PatientDashboardScreenModel(idDoctor: Ram().getDoctorId()),
+      child: PatientDashboardScreen(),
+    ),
+
+
     },
       home: SplashScreen(
           // child: FakeMain()

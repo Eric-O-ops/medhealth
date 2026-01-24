@@ -1,3 +1,5 @@
+import 'package:medhealth/common/RAM.dart';
+
 import '../api/PatientDashboardApi.dart';
 import '../dto/DoctorInfoDto.dart';
 import '../dto/PatientAppointmentDoctorDto.dart';
@@ -24,10 +26,10 @@ class PatientDashboardRep {
 
     for (var element in jsonList) {
       StatusRegistration status;
-      if (element['busyStatus'] == 'busy' && element['patientId'] != 12) {
+      if (element['busyStatus'] == 'busy' && element['patientId'].toString() != Ram().userId) {
         status = StatusRegistration.busy;
       } else if (element['busyStatus'] == 'busy' &&
-          element['patientId'] == 12) {
+          element['patientId'].toString() == Ram().userId) {
         status = StatusRegistration.mine;
       } else {
         status = StatusRegistration.free;
