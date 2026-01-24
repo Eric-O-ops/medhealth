@@ -17,7 +17,6 @@ class CreateBranchModel extends BaseScreenModel {
     isLoading = true;
     notifyListeners();
 
-    // Передаем только адрес. Никаких цифр типа 11!
     final response = await _rep.createBranch(addressController.text);
 
     if (response.code == 201 || response.code == 200) {

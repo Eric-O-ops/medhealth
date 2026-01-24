@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:medhealth/Marlen/login_screen/ui/view/SplashScreen.dart';
 import 'package:medhealth/Marlen/role/owner_main_screen/OwnerMainModel.dart';
-import 'package:medhealth/Marlen/role/owner_main_screen/model/BranchesModel.dart';
-import 'package:medhealth/Marlen/role/owner_main_screen/screens/Branches/BranchesScreen.dart';
-import 'package:medhealth/fake_main/ui/FakeMain.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordModel.dart';
 import 'package:medhealth/recovery_password/ui/base/RecoveryPasswordScreen.dart';
 import 'package:provider/provider.dart';
-
 import 'Marlen/helps_screens/HelpsScreen.dart';
 import 'Marlen/register_patient_screen/ui/RegisterPatientModel.dart';
 import 'Marlen/register_patient_screen/ui/RegisterPatientScreen.dart';
 import 'Marlen/role/admin_main_screen/ui/AdminMainModel.dart';
 import 'Marlen/role/admin_main_screen/ui/AdminMainScreen.dart';
-import 'Marlen/role/doctor_main_screen/DoctorMainScreen.dart';
 import 'Marlen/role/manager_main_screen/ui/ManagerMainModel.dart';
 import 'Marlen/role/manager_main_screen/ui/ManagerMainScreen.dart';
 import 'Marlen/role/owner_main_screen/OwnerMainScreen.dart';
@@ -40,28 +35,27 @@ class MyApp extends StatelessWidget {
       ),
       // В файле main.dart
     routes: {
-    // 1. Экраны ГЛАВНОГО МЕНЮ (предполагаем, что используют модели)
     '/ownerMain': (context) => ChangeNotifierProvider(
-    create: (_) => OwnerMainModel(), // Используйте вашу модель для Owner
+    create: (_) => OwnerMainModel(),
     child: OwnerMainScreen(),
     ),
-    // '/doctorMain': (context) => ChangeNotifierProvider(
-    // create: (_) => DoctorMainModel(), // Используйте вашу модель для Doctor
-    // child: DoctorMainScreen(),
-    // ),
-    '/managerMain': (context) => ChangeNotifierProvider(
-    create: (_) => ManagerMainModel(), // Используйте вашу модель для Manager
-    child: ManagerMainScreen(),
-    ),
+      '/managerMain': (context) {
+        final args = ModalRoute.of(context)?.settings.arguments;
+        final int actualId = (args is int) ? args : 0;
+
+        return ChangeNotifierProvider(
+          create: (_) => ManagerMainModel(),
+          child: ManagerMainScreen(),
+        );
+      },
     '/adminMain': (context) => ChangeNotifierProvider(
-    create: (_) => AdminMainModel(), // Используйте вашу модель для Admin
+    create: (_) => AdminMainModel(),
     child: AdminMainScreen(),
     ),
     '/userMain': (context) => ChangeNotifierProvider(
-    create: (_) => UserMainModel(), // Используйте вашу модель для User
+    create: (_) => UserMainModel(),
     child: UserMainScreen(),
     ),
-// 1. Маршрут для экрана Помощи
       '/helpsscreen': (context) => HelpsScreen(),
       '/applicationForm': (context) => ChangeNotifierProvider(
           create: (_) => ApplicationFormModel(),
@@ -72,7 +66,6 @@ class MyApp extends StatelessWidget {
     child: RecoveryPasswordScreen(),
     ),
 
-    // 3. ЭКРАН РЕГИСТРАЦИИ (уже исправлено)
     '/registerPatient': (context) => ChangeNotifierProvider(
     create: (_) => RegisterPatientModel(),
     child: const RegisterPatientScreen(),

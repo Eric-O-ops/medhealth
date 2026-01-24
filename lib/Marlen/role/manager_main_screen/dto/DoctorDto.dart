@@ -1,48 +1,78 @@
 class DoctorDto {
   final int id;
   final int userId;
+  final int branchId;
   final String firstName;
   final String lastName;
-  final String phone;
+  final String email;
+  final String specialization;
+  final double price;
   final String education;
-  final String description; // О себе
-  final int experience; // Стаж
-  final String specialization; // Специальность (пока текстом или ID)
-  // Для графика работы (пока сохраняем как строку, например "Пн, Ср, Пт")
-  final String schedule;
-  final int? branchId;
+  final int experience;
+  final String description;
+  final String workingHours;
+  final String offDays;
+  final String gender;
+  final int age;
+  final String? photoUrl;
+  final String branchDescription; // Праздники из филиала
 
   DoctorDto({
     required this.id,
     required this.userId,
+    required this.branchId,
     required this.firstName,
     required this.lastName,
-    required this.phone,
-    required this.education,
-    required this.description,
-    required this.experience,
+    required this.email,
     required this.specialization,
-    this.schedule = "Пн-Пт",
-    this.branchId,
+    required this.price,
+    required this.education,
+    required this.experience,
+    required this.description,
+    this.workingHours = "",
+    this.offDays = "",
+    required this.gender,
+    required this.age,
+    this.photoUrl,
+    this.branchDescription = "",
   });
 
   factory DoctorDto.fromJson(Map<String, dynamic> json) {
-    // В Django сериализаторе данные пользователя часто лежат внутри поля 'user'
-    final user = json['user'] ?? {};
+    String? rawPhoto = json['photo'] ?? json['photo_url'];
+
+    // Формируем полный URL для картинки
+    String? fullPhotoUrl;
+    if (rawPhoto != null && rawPhoto.isNotEmpty) {
+      if (rawPhoto.startsWith('http')) {
+        fullPhotoUrl = rawPhoto;
+      } else {
+        // Замените на IP вашего сервера, если тестируете не на эмуляторе
+        fullPhotoUrl = "http://127.0.0.1:8000$rawPhoto";
+      }
+    }
 
     return DoctorDto(
-        id: json['id'] ?? 0,
-        userId: user['id'] ?? 0,
-        firstName: user['first_name'] ?? '',
-        lastName: user['last_name'] ?? '',
-        phone: user['phone_number'] ?? '',
-        education: json['education'] ?? '',
-        description: json['description'] ?? '',
-        experience: json['experience_years'] ?? 0,
-        // Если на бэке поле specialization это choice, оно придет строкой
-        specialization: json['specialization'] ?? 'Терапевт',
-        branchId: json['branch'],
-        schedule: json['schedule'] ?? "Пн-Пт 09:00-18:00" // Предполагаем поле
+      id: json['id'] ?? 0,
+      userId: json['user']?['id'] ?? 0,
+      // Исправляем получение branchId, так как в JSON может прийти объект или ID
+      branchId: json['branch'] is int
+          ? json['branch']
+          : (json['branch_id'] ?? (json['branch']?['id'] ?? 0)),
+      firstName: json['user']?['first_name'] ?? '',
+      lastName: json['user']?['last_name'] ?? '',
+      email: json['user']?['email'] ?? '',
+      specialization: json['specialization'] ?? 'Врач',
+      price: double.tryParse(json['price'].toString()) ?? 0.0,
+      education: json['education'] ?? '',
+      experience: json['experience_years'] ?? 0,
+      description: json['description'] ?? '',
+      workingHours: json['working_hours'] ?? "09:00 - 21:00",
+      offDays: json['off_days'] ?? '',
+      gender: json['gender'] ?? 'male',
+      age: json['age'] ?? 25,
+      photoUrl: fullPhotoUrl,
+      // Подтягиваем праздники из нового поля сериализатора
+      branchDescription: json['branch_description'] ?? "",
     );
   }
 }

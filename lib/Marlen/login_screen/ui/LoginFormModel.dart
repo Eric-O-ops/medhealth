@@ -6,7 +6,7 @@ import '../rep/LoginFormRep.dart';
 class LoginFormModel extends BaseScreenModel {
   final LoginFormRep _rep = LoginFormRep();
   int? clinicOwnerId;
-
+  int? managerBranchId; // Добавляем поле для ID филиала менеджера
   String email = "";
   String password = "";
   bool isHidden = true;
@@ -32,6 +32,24 @@ class LoginFormModel extends BaseScreenModel {
             if (ownerData != null) {
               clinicOwnerId = ownerData['id'];
               print("Найден ID клиники: $clinicOwnerId");
+            }
+          }
+        }
+        // ЛОГИКА ДЛЯ МЕНЕДЖЕРА (Добавьте этот блок!)
+        if (user.role == 'manager') {
+          // Запрашиваем список всех филиалов, чтобы найти, к какому привязан этот менеджер
+          final branchesResponse = await BaseApi().fetch("api/branches/");
+          if (branchesResponse.code == 200) {
+            List branches = branchesResponse.body;
+            for (var branch in branches) {
+              List managers = branch['managers'] ?? [];
+              // Ищем текущего пользователя в списке менеджеров этого филиала
+              final isMyBranch = managers.any((m) => m['user']['id'] == user.id);
+              if (isMyBranch) {
+                managerBranchId = branch['id'];
+                print("Менеджер привязан к филиалу ID: $managerBranchId");
+                break;
+              }
             }
           }
         }

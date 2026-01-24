@@ -1,6 +1,6 @@
 class ManagerDto {
-  final int id;        // ID записи менеджера (например, 9)
-  final int userId;    // ID самого пользователя (например, 26)
+  final int id;
+  final int userId;
   final String email;
   final String firstName;
   final String lastName;
@@ -9,7 +9,7 @@ class ManagerDto {
 
   ManagerDto({
     required this.id,
-    required this.userId, // Добавили
+    required this.userId,
     required this.email,
     required this.firstName,
     required this.lastName,
@@ -22,7 +22,7 @@ class ManagerDto {
 
     return ManagerDto(
       id: json['id'] ?? 0,
-      userId: userData?['id'] ?? 0, // Сохраняем ID из вложенного объекта user
+      userId: userData?['id'] ?? 0,
       email: userData?['email'] ?? '',
       firstName: userData?['first_name'] ?? '',
       lastName: userData?['last_name'] ?? '',

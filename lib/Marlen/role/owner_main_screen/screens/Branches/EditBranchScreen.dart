@@ -3,9 +3,6 @@ import 'package:medhealth/common/BaseScreen.dart';
 import 'package:medhealth/common/view/CustomTextField.dart';
 import 'package:medhealth/styles/app_colors.dart';
 import 'package:provider/provider.dart';
-// Проверь эти пути, они должны быть корректными в твоем проекте
-import '../../../../../clinic_owner_screens/ui/add_manager /AddManagerModel.dart';
-import '../../../../../clinic_owner_screens/ui/add_manager /AddManagerScreen.dart';
 import '../../model/EditBranchModel.dart';
 import '../../dto/BranchDto.dart';
 

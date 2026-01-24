@@ -19,8 +19,6 @@ class _HolidaySettingsScreenState extends BaseScreen<HolidaySettingsScreen, Holi
 
   @override
   Widget buildBody(BuildContext context, HolidaySettingsModel viewModel) {
-    // ВНИМАНИЕ: Scaffold НЕ НУЖЕН, он уже есть в BaseScreen.
-    // Если BaseScreen возвращает Scaffold, здесь используем просто Column/ListView.
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -90,12 +88,10 @@ class _HolidaySettingsScreenState extends BaseScreen<HolidaySettingsScreen, Holi
                   backgroundColor: AppColors.blue,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
               ),
-              // В кнопке сохранения:
+
               onPressed: viewModel.isLoading ? null : () async {
-                // 1. Сначала проверяем, есть ли данные в главной модели
                 final mainModel = Provider.of<OwnerMainModel>(context, listen: false);
 
-                // Если список пуст, попробуем загрузить его принудительно прямо сейчас
                 if (mainModel.branches.isEmpty) {
                   await mainModel.loadBranches();
                 }
@@ -109,15 +105,12 @@ class _HolidaySettingsScreenState extends BaseScreen<HolidaySettingsScreen, Holi
                   return;
                 }
 
-                // 2. Сохраняем
                 await viewModel.saveGlobalSettings(branchIds, () {
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Настройки обновлены!"))
                   );
                   mainModel.loadBranches();
 
-                  // 3. Вместо pop() просто даем пользователю понять, что всё ок,
-                  // либо используем задержку, чтобы избежать "черного экрана"
                   Future.delayed(const Duration(milliseconds: 300), () {
                     if (mounted) Navigator.of(context).maybePop();
                   });
@@ -135,12 +128,11 @@ class _HolidaySettingsScreenState extends BaseScreen<HolidaySettingsScreen, Holi
           // Кнопка выхода
           Center(
             child: TextButton.icon(
-              // В кнопке выхода:
               onPressed: () {
                 Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => ChangeNotifierProvider(
-                      create: (_) => LoginFormModel(), // Создаем модель для экрана логина
+                      create: (_) => LoginFormModel(),
                       child: const LoginScreen(),
                     ),
                   ),

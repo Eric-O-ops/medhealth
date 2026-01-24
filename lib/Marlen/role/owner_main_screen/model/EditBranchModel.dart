@@ -20,14 +20,13 @@ class EditBranchModel extends BaseScreenModel {
   }
   void setOwnerId(int id) {
     _rep.setOwnerId(id);
-    loadManagers(); // Загружаем менеджеров сразу после получения ID
+    loadManagers();
   }
   @override
   Future<void> onInitialization() async {
     await loadManagers();
   }
 
-  // Загружаем список всех менеджеров для выпадающего списка
   Future<void> loadManagers() async {
     isLoading = true;
     notifyListeners();
@@ -52,7 +51,7 @@ class EditBranchModel extends BaseScreenModel {
 
     final data = {
       "address": addressController.text,
-      "manager": selectedManagerId, // ID выбранного менеджера
+      "manager": selectedManagerId,
     };
 
     final response = await _rep.updateBranch(branch.id, data);

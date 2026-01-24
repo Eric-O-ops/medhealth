@@ -27,29 +27,26 @@ class _OwnerMainScreenState extends BaseScreen<OwnerMainScreen, OwnerMainModel> 
   @override
   void initState() {
     super.initState();
-    // Создаем модель филиалов
     branchesModel = BranchesModel();
     holidayModel = HolidaySettingsModel();
 
     _screens = [
       ChangeNotifierProvider.value(
-        value: branchesModel, // Используем нашу переменную
+        value: branchesModel,
         child: const BranchesScreen(),
       ),
       const ManagersListScreen(),
       const OwnerToolsScreen(),
       ChangeNotifierProvider.value(
           value: holidayModel,
-          child: const HolidaySettingsScreen()), // Используем её
+          child: const HolidaySettingsScreen()),
     ];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments;
       if (args is int) {
-        // 1. Настраиваем главную модель (для менеджеров и табов)
         Provider.of<OwnerMainModel>(context, listen: false).setupOwner(args);
 
-        // 2. Настраиваем модель филиалов
         branchesModel.updateOwnerId(args);
         holidayModel.updateOwnerId(args);
       }
@@ -81,7 +78,7 @@ class _OwnerMainScreenState extends BaseScreen<OwnerMainScreen, OwnerMainModel> 
   @override
   Widget buildBody(BuildContext context, OwnerMainModel viewModel) {
     return Scaffold(
-      backgroundColor: AppColors.wight, // Проверь название: обычно white, а не wight
+      backgroundColor: AppColors.wight,
       body: IndexedStack(
         index: viewModel.selectedIndex,
         children: _screens,

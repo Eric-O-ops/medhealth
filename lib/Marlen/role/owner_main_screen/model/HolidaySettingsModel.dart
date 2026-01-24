@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; // Нужен для TextEditingController
+import 'package:flutter/material.dart';
 import 'package:medhealth/common/BaseScreenModel.dart';
 import '../rep/OwnerRep.dart';
 
@@ -10,16 +10,12 @@ class HolidaySettingsModel extends BaseScreenModel {
 
   @override
   Future<void> onInitialization() async {
-    // Можно оставить пустым
   }
 
-  // Список выбранных дней (Сб, Вс и т.д.)
   List<String> selectedDays = [];
 
-  // Контроллер для ввода текста праздника (например, "8 марта")
   final holidayNoteController = TextEditingController();
 
-  // Логика выбора/снятия выбора дня
   void toggleDay(String day) {
     if (selectedDays.contains(day)) {
       selectedDays.remove(day);
@@ -44,7 +40,6 @@ class HolidaySettingsModel extends BaseScreenModel {
         "working_hours": workingHoursController.text.trim(),
       };
 
-      // Выполняем все запросы
       for (var id in branchIds) {
         final resp = await _rep.updateBranch(id, data);
         print("Обновление филиала $id: Код ${resp.code} Тело: ${resp.body}");

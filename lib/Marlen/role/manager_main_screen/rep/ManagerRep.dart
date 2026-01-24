@@ -1,34 +1,58 @@
-import 'package:dio/dio.dart' hide Response;
+import 'dart:io';
 import '../../../../common/BaseApi.dart';
 
 class ManagerRep {
   final BaseApi _api = BaseApi();
+  int? _branchId; // БЕЗ static для изоляции данных
 
-  // 1. Получить информацию о самом менеджере, чтобы узнать ID его филиала
-  // Мы ищем менеджера по user_id (который мы получили при логине)
-  Future<Response> getManagerInfo(int userId) async {
-    // Фильтруем список менеджеров по user_id
-    // Бэкенд должен поддерживать ?user_id=... или возвращать список, где мы найдем нужного
-    return await _api.fetch("api/managers/?user=$userId");
+  int? get currentBranchId => _branchId;
+
+  // Установка ID филиала
+  void setBranchId(int id) {
+    // Защита от случайного обнуления валидного ID
+    if (id == 0 && _branchId != null && _branchId != 0) {
+      print("ManagerRep: Сброс проигнорирован. Текущий ID: $_branchId");
+      return;
+    }
+    _branchId = id;
+    print("ManagerRep: Branch ID установлен в $_branchId");
   }
 
-  // 2. Получить список врачей филиала
-  Future<Response> getDoctors(int branchId) async {
-    return await _api.fetch("api/doctors/?branch=$branchId");
+  // Получение данных филиала (название клиники, адрес и т.д.)
+  Future<Response> fetchBranchInfo() async {
+    if (_branchId == null || _branchId == 0) return Response(code: 400, body: "Branch ID not set");
+    return await _api.fetch("api/branches/$_branchId/");
   }
 
-  // 3. Создать врача
-  Future<Response> createDoctor(Map<String, dynamic> data) async {
-    return await _api.post("api/doctors/", data);
+  // Получение врачей ТОЛЬКО этого филиала
+  Future<Response> fetchMyDoctors() async {
+    if (_branchId == null || _branchId == 0) return Response(code: 400, body: "Branch ID not set");
+    return await _api.fetch("api/doctors/?branch_id=$_branchId");
   }
 
-  // 4. Обновить врача
-  Future<Response> updateDoctor(int id, Map<String, dynamic> data) async {
-    return await _api.patch("api/doctors/$id/", data);
+  Future<Response> createDoctorAccount(Map<String, dynamic> data) async {
+    data['branch_id'] = _branchId;
+    return _api.post("api/doctors/", data);
   }
 
-  // 5. Удалить врача (удаляем пользователя)
-  Future<Response> deleteDoctorUser(int userId) async {
-    return await _api.delete("api/users/$userId/");
+  Future<Response> updateDoctorProfile(int id, Map<String, dynamic> data, File? imageFile) async {
+    if (imageFile != null) {
+      return await _api.postWithFile("api/doctors/$id/", data, imageFile, isPatch: true);
+    } else {
+      return await _api.patch("api/doctors/$id/", data);
+    }
+  }
+
+  Future<Response> updateUserAccount(int userId, Map<String, dynamic> data) async {
+    return await _api.patch("api/users/$userId/", data);
+  }
+
+  Future<Response> deleteDoctor(int id) async {
+    return await _api.delete("api/doctors/$id/");
+  }
+
+  Future<Response> getBranchConstraints() async {
+    if (_branchId == null || _branchId == 0) return Response(code: 400, body: "Branch ID not set");
+    return _api.fetch("api/branches/$_branchId/");
   }
 }

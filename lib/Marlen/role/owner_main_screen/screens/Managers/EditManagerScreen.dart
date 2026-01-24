@@ -65,7 +65,6 @@ class _EditManagerScreenState extends State<EditManagerScreen> {
               height: 55,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                // EditManagerScreen.dart -> в onPressed:
 
                 onPressed: () {
                   final String newPass = passwordController.text.trim();

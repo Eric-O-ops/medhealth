@@ -17,14 +17,11 @@ class OwnerMainModel extends BaseScreenModel {
   List<ManagerDto> get managers => _managers;
   List<BranchDto> get branches => _branches;
 
-  // 1. Метод инициализации данных для конкретного владельца
-  // Вызывайте его сразу после перехода на этот экран
   void setupOwner(int id) {
     print("OwnerMainModel: Устанавливаю ID владельца = $id");
     this.ownerId = id;
     _rep.setOwnerId(id);
 
-    // Явно запускаем загрузку данных СРАЗУ после установки ID
     loadBranches();
     loadManagers();
   }
@@ -32,7 +29,6 @@ class OwnerMainModel extends BaseScreenModel {
   @override
   Future<void> onInitialization() async {
     print("OwnerMainModel инициализирован.");
-    // Если ID уже пришел через setupOwner (вызванный в create провайдера)
     if (ownerId != null) {
       loadBranches();
       loadManagers();
@@ -44,20 +40,18 @@ class OwnerMainModel extends BaseScreenModel {
       _selectedIndex = index;
       notifyListeners();
 
-      // Подгружаем данные только если установлен ID владельца
       if (ownerId != null) {
         if (index == 0) loadBranches();
         if (index == 1) loadManagers();
       }
     }
   }
-// OwnerMainModel.dart
 
   Future<void> loadBranches() async {
     if (ownerId == null || ownerId == 0) return;
 
     isLoading = true;
-    notifyListeners(); // Показываем индикатор загрузки
+    notifyListeners();
 
     try {
       final response = await _rep.fetchBranches();
@@ -73,11 +67,10 @@ class OwnerMainModel extends BaseScreenModel {
       print("Ошибка загрузки филиалов: $e");
     } finally {
       isLoading = false;
-      notifyListeners(); // ОБЯЗАТЕЛЬНО: уведомляем UI, чтобы список перерисовался
+      notifyListeners();
     }
   }
 
-  // --- Загрузка менеджеров ---
   Future<void> loadManagers() async {
     if (ownerId == null) return;
 
@@ -109,11 +102,9 @@ class OwnerMainModel extends BaseScreenModel {
     notifyListeners();
 
     try {
-      // Стучимся в /api/users/ID_ПОЛЬЗОВАТЕЛЯ/
       final response = await _rep.deleteManager(userId);
 
       if (response.code == 204 || response.code == 200) {
-        // Удаляем из списка по ID МЕНЕДЖЕРА
         _managers.removeWhere((m) => m.id == localManagerId);
       } else {
         print("Ошибка удаления: ${response.body}");
@@ -126,7 +117,6 @@ class OwnerMainModel extends BaseScreenModel {
     }
   }
 
-  // Обновленный метод обновления (использует userId)
   Future<void> updateManager(int userId, Map<String, dynamic> data) async {
     isLoading = true;
     notifyListeners();

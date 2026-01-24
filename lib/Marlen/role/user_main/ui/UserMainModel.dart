@@ -1,39 +1,37 @@
 import 'package:medhealth/common/BaseScreenModel.dart';
-import 'package:flutter/material.dart'; // Нужен для ChangeNotifier/notifyListeners
-
-// Замените medhealth/common/BaseScreenModel.dart на ваш актуальный путь
-// Если BaseScreenModel наследуется от ChangeNotifier, то дополнительный import не нужен
+import '../rep/PatientRep.dart'; // Путь к твоему репозиторию
 
 class UserMainModel extends BaseScreenModel {
+  final PatientRep _patientRep = PatientRep();
 
-  // --- Состояние ---
-  int _selectedIndex = 0; // Индекс выбранной вкладки
-
-  // --- Геттеры ---
+  int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
+
+  List<dynamic> clinics = [];
+
+  void setTabIndex(int index) {
+    _selectedIndex = index;
+    notifyListeners();
+  }
 
   @override
   Future<void> onInitialization() async {
-    // Здесь можно загрузить данные пользователя при старте
-    print("UserMainModel инициализирован.");
+    await loadClinics();
   }
 
-  // --- Логика ---
-  void setTabIndex(int index) {
-    if (_selectedIndex != index) {
-      _selectedIndex = index;
-      notifyListeners();
-      // Опционально: здесь можно вызывать загрузку данных для конкретной вкладки
-      // loadDataForTab(index);
-    }
-  }
-
-  // Пример метода загрузки данных (для каждой вкладки можно создать свой)
-  Future<void> loadDashboardData() async {
+  Future<void> loadClinics() async {
     isLoading = true;
-    // Имитация задержки API
-    await Future.delayed(const Duration(seconds: 1));
-    isLoading = false;
-    // Здесь можно обновлять специфичные поля данных
+    notifyListeners();
+    try {
+      final response = await _patientRep.fetchAllClinics();
+      if (response.code == 200 && response.body is List) {
+        clinics = response.body;
+      }
+    } catch (e) {
+      print("Ошибка загрузки клиник: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

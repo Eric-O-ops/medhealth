@@ -9,14 +9,14 @@ class BranchesModel extends BaseScreenModel {
   List<BranchDto> get branches => _branches;
   void updateOwnerId(int id) {
     _rep.setOwnerId(id);
-    loadBranches(); // Теперь загружаем уже с правильным ID
+    loadBranches();
   }
   @override
   Future<void> onInitialization() async {
   }
 
   Future<void> loadBranches() async {
-    print("!!! ВЫЗВАН МЕТОД loadBranches !!!"); // <--- ДОБАВЬ ЭТО
+    print("!!! ВЫЗВАН МЕТОД loadBranches !!!");
     isLoading = true;
     notifyListeners();
     try {

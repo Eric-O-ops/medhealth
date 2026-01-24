@@ -1,88 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:medhealth/common/BaseScreen.dart'; // Ваш BaseScreen
-import 'package:medhealth/styles/app_colors.dart'; // Ваши цвета
+import 'package:medhealth/Marlen/role/user_main/screens/ClinicsListScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:medhealth/common/BaseScreen.dart';
+import 'package:medhealth/styles/app_colors.dart';
+import '../models/ClinicListModel.dart';
 import 'UserMainModel.dart';
 
-// ----------------------------------------------------
-// ВАЖНО: Создайте заглушки для контента вкладок
-// ----------------------------------------------------
-class DashboardScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("Главная", style: TextStyle(fontSize: 24)));
-}
-class AppointmentsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("Записи", style: TextStyle(fontSize: 24)));
-}
-class HistoryScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("История", style: TextStyle(fontSize: 24)));
-}
-class ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => const Center(child: Text("Профиль", style: TextStyle(fontSize: 24)));
-}
-// ----------------------------------------------------
-
-
 class UserMainScreen extends StatefulWidget {
+  const UserMainScreen({super.key});
+
   @override
   _UserMainScreenState createState() => _UserMainScreenState();
 }
 
-class _UserMainScreenState
-    extends BaseScreen<UserMainScreen, UserMainModel> {
+class _UserMainScreenState extends BaseScreen<UserMainScreen, UserMainModel> {
+  late List<Widget> _screens;
+  late ClinicListModel _clinicListModel;
 
-  // Список виджетов, соответствующих вкладкам
-  final List<Widget> _screens = [
-    DashboardScreen(),      // 0: Главная
-    AppointmentsScreen(),   // 1: Записи
-    HistoryScreen(),        // 2: История
-    ProfileScreen(),        // 3: Профиль
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    _clinicListModel = ClinicListModel();
+
+    _screens = [
+      ChangeNotifierProvider.value(
+        value: _clinicListModel,
+        child: ClinicsListScreen(),
+      ),
+      const Center(child: Text("Записи", style: TextStyle(fontSize: 20))),
+      const Center(child: Text("История", style: TextStyle(fontSize: 20))),
+      const Center(child: Text("Профиль", style: TextStyle(fontSize: 20))),
+    ];
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _clinicListModel.loadClinics();
+    });
+  }
+
+  Widget _buildNavItem({required IconData icon, required bool isSelected}) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: isSelected ? AppColors.blue : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.blue.withOpacity(0.5), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Icon(icon, color: isSelected ? Colors.white : AppColors.blue, size: 32),
+    );
+  }
 
   @override
   Widget buildBody(BuildContext context, UserMainModel viewModel) {
     return Scaffold(
-      // 1. Отображение контента в зависимости от выбранного индекса
+      backgroundColor: AppColors.wight,
       body: IndexedStack(
         index: viewModel.selectedIndex,
         children: _screens,
       ),
-
-      // 2. Нижняя панель навигации (BottomNavigationBar)
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Чтобы все 4 иконки были видны
-        currentIndex: viewModel.selectedIndex,
-        selectedItemColor: AppColors.blue, // Используйте ваш основной цвет
-        unselectedItemColor: Colors.grey,
-
-        // Обработка нажатия: обновляем индекс в модели
-        onTap: (index) => viewModel.setTabIndex(index),
-
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Главная',
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.gray,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _navButton(0, Icons.local_hospital_outlined, viewModel),
+                _navButton(1, Icons.calendar_month_outlined, viewModel),
+                _navButton(2, Icons.history_outlined, viewModel),
+                _navButton(3, Icons.person_outline, viewModel),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            activeIcon: Icon(Icons.calendar_month),
-            label: 'Записи',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history_outlined),
-            activeIcon: Icon(Icons.history),
-            label: 'История',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Профиль',
-          ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _navButton(int index, IconData icon, UserMainModel viewModel) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => viewModel.setTabIndex(index),
+      child: _buildNavItem(icon: icon, isSelected: viewModel.selectedIndex == index),
     );
   }
 }

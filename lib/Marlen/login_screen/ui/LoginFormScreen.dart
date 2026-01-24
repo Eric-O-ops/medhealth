@@ -116,8 +116,24 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
                             Navigator.pushReplacementNamed(context, '/doctorMain');
                             break;
 
+                        // Внутри LoginScreen.dart, в методе onPressed кнопки "Войти":
+
                           case "manager":
-                            Navigator.pushReplacementNamed(context, '/managerMain');
+                            final branchId = viewModel.managerBranchId;
+                            print("ID филиала для менеджера: $branchId");
+
+                            if (branchId != null) {
+                              Navigator.pushReplacementNamed(
+                                  context,
+                                  '/managerMain',
+                                  arguments: branchId // ТЕПЕРЬ МЫ ПЕРЕДАЕМ ID
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Ошибка: Менеджер не привязан к филиалу"), backgroundColor: Colors.orange)
+                              );
+                              // Даже если ID нет, можно пустить в профиль, но лучше выдать ошибку
+                            }
                             break;
 
                           case "admin":

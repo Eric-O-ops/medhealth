@@ -122,7 +122,6 @@ class _BranchesScreenState extends State<BranchesScreen> {
                         ),
                       );
 
-                      // Если вернулись с результатом true, обновляем список филиалов
                       if (result == true) {
                         viewModel.loadBranches();
                       }

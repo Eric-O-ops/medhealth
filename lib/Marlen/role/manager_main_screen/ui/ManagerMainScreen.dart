@@ -1,112 +1,276 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../common/BaseScreen.dart';
+import '../../../../styles/app_colors.dart';
+import '../../../login_screen/ui/LoginFormModel.dart';
+import '../../../login_screen/ui/LoginFormScreen.dart';
+import '../dto/DoctorDto.dart';
+import '../model/DoctorsListModel.dart';
+import '../model/AddDoctorModel.dart';
+import '../model/FillDoctorProfileModel.dart';
+import '../screens/create/CreateDoctorAccountScreen.dart';
+import '../screens/DoctorShowcaseScreen.dart';
+import '../screens/DoctorsListScreen.dart';
+import '../screens/create/FillDoctorProfileFormScreen.dart';
+import '../screens/create/FillProfileSelectorScreen.dart';
 import 'ManagerMainModel.dart';
 
 class ManagerMainScreen extends StatefulWidget {
-  final int userId; // ID авторизованного пользователя
-  const ManagerMainScreen({super.key, required this.userId});
+  const ManagerMainScreen({super.key});
 
   @override
   State<ManagerMainScreen> createState() => _ManagerMainScreenState();
 }
 
-class _ManagerMainScreenState extends State<ManagerMainScreen> {
+class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainModel> {
+  late DoctorsListModel doctorsModel;
+  int _currentBranchId = 0;
+
   @override
-  Widget build(BuildContext context) {
-    // Используем ChangeNotifierProvider для связки модели и UI
-    return ChangeNotifierProvider(
-      create: (_) => ManagerMainModel()..initManager(widget.userId),
-      child: Consumer<ManagerMainModel>(
-        builder: (context, model, child) {
-          return Scaffold(
-            appBar: AppBar(title: const Text("Управление врачами")),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _showDoctorDialog(context, model, isEditing: false),
-              child: const Icon(Icons.add),
-            ),
-            body: model.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : model.doctors.isEmpty
-                ? const Center(child: Text("Врачей пока нет"))
-                : ListView.builder(
-              itemCount: model.doctors.length,
-              itemBuilder: (context, index) {
-                final doc = model.doctors[index];
-                return Card(
-                  margin: const EdgeInsets.all(8),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      child: Icon(Icons.person),
-                    ),
-                    title: Text("${doc.firstName} ${doc.lastName}"),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Спец: ${doc.specialization}"),
-                        Text("Опыт: ${doc.experience} лет"),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => model.deleteDoctor(doc.userId),
-                    ),
-                    onTap: () {
-                      // Заполнение полей для редактирования (упрощенно)
-                      model.educationCtrl.text = doc.education;
-                      model.descCtrl.text = doc.description;
-                      model.expCtrl.text = doc.experience.toString();
-                      _showDoctorDialog(context, model, isEditing: true, docId: doc.id);
-                    },
+  void initState() {
+    super.initState();
+    // Инициализируем модель списка врачей
+    doctorsModel = DoctorsListModel();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args is int && args != 0) {
+        setState(() {
+          _currentBranchId = args;
+        });
+
+        // 1. Настраиваем главную модель (загрузка названия клиники и адреса)
+        context.read<ManagerMainModel>().setupManager(args);
+
+        // 2. Настраиваем модель списка врачей (загрузка докторов филиала)
+        doctorsModel.setup(args);
+      }
+    });
+  }
+
+  // Используем функцию с передачей viewModel, чтобы данные клиники обновлялись корректно
+  List<Widget> _getScreens(ManagerMainModel viewModel) {
+    return [
+      // Внутри _getScreens:
+      ChangeNotifierProvider.value(
+        value: doctorsModel,
+        child: Consumer<DoctorsListModel>(
+          builder: (_, model, __) => DoctorShowcaseScreen(
+            doctors: model.doctors,
+            isLoading: model.isLoading,
+            clinicName: viewModel.clinicName,
+            branchAddress: viewModel.branchAddress,
+            branchWorkingHours: model.branchWorkingHours, // Добавлено
+            onRefresh: () => model.refreshData(),        // Добавлено (свайп)
+            onEdit: (doc) => _openFillProfile(doc),
+            onDelete: (id) => model.deleteDoctor(id),
+          ),
+        ),
+      ),
+
+      // ВТОРАЯ ВКЛАДКА: Список управления (List)
+      ChangeNotifierProvider.value(
+        value: doctorsModel,
+        child: Consumer<DoctorsListModel>(
+          builder: (_, model, __) => DoctorsListScreen(
+            doctors: model.doctors,
+            // ВАЖНО: Убедись, что внутри DoctorsListScreen конструктор
+            // принимает именно эти 3 параметра
+            onDelete: (id) => model.deleteDoctor(id),
+            onEdit: (doctor) => _openFillProfile(doctor),
+          ),
+        ),
+      ),
+
+      _buildAddTab(),
+    ];
+  }
+
+
+  void _openFillProfile(DoctorDto doctor) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => FillDoctorProfileModel()..setup(doctor),
+          child: const FillDoctorProfileFormScreen(),
+        ),
+      ),
+    ).then((_) => doctorsModel.loadDoctors());
+  }
+
+  Widget _buildAddTab() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+      child: Column(
+        children: [
+          _buildSelectionCard(
+            context,
+            title: "Создать аккаунт",
+            subtitle: "Email, пароль, ФИО",
+            icon: Icons.person_add_alt_1,
+            onTap: () {
+              int activeBranchId = doctorsModel.branchId ?? _currentBranchId;
+              if (activeBranchId == 0) return;
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ChangeNotifierProvider(
+                    create: (_) => AddDoctorModel()..setBranchId(activeBranchId),
+                    child: const CreateDoctorAccountScreen(),
                   ),
+                ),
+              ).then((_) => doctorsModel.loadDoctors());
+            },
+          ),
+          const SizedBox(height: 20),
+          _buildSelectionCard(
+            context,
+            title: "Заполнить профиль",
+            subtitle: "Фото, стаж, цены, график",
+            icon: Icons.edit_note,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FillProfileSelectorScreen(doctors: doctorsModel.doctors),
+                ),
+              ).then((_) => doctorsModel.loadDoctors());
+            },
+          ),
+          SizedBox(height: 30),
+          Center(
+            child: TextButton.icon(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => LoginFormModel(),
+                      child: const LoginScreen(),
+                    ),
+                  ),
+                      (route) => false,
                 );
               },
+              icon: const Icon(Icons.logout, color: Colors.red),
+              label: const Text("Выйти из аккаунта", style: TextStyle(color: Colors.red)),
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
 
-  // Диалоговое окно для добавления/редактирования
-  void _showDoctorDialog(BuildContext context, ManagerMainModel model, {required bool isEditing, int? docId}) {
-    if (!isEditing) model.clearFields();
+  Widget _buildSelectionCard(
+      BuildContext context, {
+        required String title,
+        required String subtitle,
+        required IconData icon,
+        required VoidCallback onTap,
+      }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          color: AppColors.gray,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 70,
+              height: 70,
+              decoration: const BoxDecoration(
+                color: AppColors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: Colors.white, size: 36),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(fontSize: 15, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(isEditing ? "Редактировать" : "Добавить врача"),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (!isEditing) ...[
-                TextField(controller: model.emailCtrl, decoration: const InputDecoration(labelText: "Email (Логин)")),
-                TextField(controller: model.passwordCtrl, decoration: const InputDecoration(labelText: "Пароль")),
-                TextField(controller: model.firstNameCtrl, decoration: const InputDecoration(labelText: "Имя")),
-                TextField(controller: model.lastNameCtrl, decoration: const InputDecoration(labelText: "Фамилия")),
-                TextField(controller: model.phoneCtrl, decoration: const InputDecoration(labelText: "Телефон")),
+  @override
+  Widget buildBody(BuildContext context, ManagerMainModel viewModel) {
+    return Scaffold(
+      backgroundColor: AppColors.wight,
+      body: IndexedStack(
+        index: viewModel.selectedIndex,
+        children: _getScreens(viewModel), // Вызываем метод построения экранов
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: AppColors.gray,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _navButton(0, Icons.location_city_outlined, viewModel),
+                _navButton(1, Icons.people_outline, viewModel),
+                _navButton(2, Icons.add, viewModel),
               ],
-              const SizedBox(height: 10),
-              TextField(controller: model.educationCtrl, decoration: const InputDecoration(labelText: "Образование")),
-              TextField(controller: model.expCtrl, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "Стаж (лет)")),
-              TextField(controller: model.descCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "О себе")),
-              // Тут можно добавить DropdownButton для выбора специальности
-            ],
+            ),
           ),
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Отмена")),
-          ElevatedButton(
-            onPressed: () {
-              model.saveDoctor(
-                isEditing: isEditing,
-                docId: docId,
-                onSuccess: () => Navigator.pop(ctx),
-              );
-            },
-            child: const Text("Сохранить"),
-          )
-        ],
+      ),
+    );
+  }
+
+  Widget _navButton(int index, IconData icon, ManagerMainModel viewModel) {
+    return GestureDetector(
+      onTap: () => viewModel.setTabIndex(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: viewModel.selectedIndex == index ? AppColors.blue : Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.blue.withOpacity(0.5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Icon(
+          icon,
+          color: viewModel.selectedIndex == index ? Colors.white : AppColors.blue,
+          size: 32,
+        ),
       ),
     );
   }

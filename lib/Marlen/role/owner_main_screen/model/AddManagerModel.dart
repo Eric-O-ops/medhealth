@@ -17,11 +17,10 @@ class AddManagerModel extends BaseScreenModel {
 // Добавляем метод
   void setOwnerId(int id) {
     _rep.setOwnerId(id);
-    loadBranches(); // Сразу грузим список для Dropdown
+    loadBranches();
   }
   @override
   Future<void> onInitialization() async {
-    // На всякий случай сбросим состояние
     _branches = [];
     selectedBranchId = null;
     await loadBranches();
@@ -57,7 +56,6 @@ class AddManagerModel extends BaseScreenModel {
     isLoading = true;
     notifyListeners();
 
-    // ДОБАВЛЕНЫ ОБЯЗАТЕЛЬНЫЕ ПОЛЯ ДЛЯ DJANGO
     final data = {
       "user": {
         "email": emailController.text.trim(),
@@ -66,9 +64,9 @@ class AddManagerModel extends BaseScreenModel {
         "first_name": firstNameController.text.trim(),
         "last_name": lastNameController.text.trim(),
         "role": "manager",
-        "phone_number": "0000000000", // Заглушка, если нет поля ввода
-        "date_of_birth": "2000-01-01", // Заглушка
-        "address": "Bishkek",          // Заглушка
+        "phone_number": "0000000000",
+        "date_of_birth": "2000-01-01",
+        "address": "Bishkek",
       },
       "branch_id": selectedBranchId,
     };
