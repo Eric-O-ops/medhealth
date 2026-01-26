@@ -9,12 +9,10 @@ class AdminMainModel extends BaseScreenModel {
   final ApplicationFormRep _rep = ApplicationFormRep();
   final LoginFormRep _userRep = LoginFormRep(); // Для загрузки пользователей
 
-  // --- Состояние ---
   int _selectedIndex = 1;
   List<ApplicationFromDto> _pendingRequests = [];
   List<LoginUserDto> _privilegedUsers = []; // Список админов и владельцев
 
-  // --- Геттеры ---
   int get selectedIndex => _selectedIndex;
   List<ApplicationFromDto> get pendingRequests => _pendingRequests;
   int get pendingRequestsCount => _pendingRequests.length;

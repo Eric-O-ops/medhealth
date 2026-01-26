@@ -17,24 +17,15 @@ class DoctorsListModel extends BaseScreenModel {
     refreshData();
   }
 
-  // Future<void> refreshData() async {
-  //   isLoading = true;
-  //   notifyListeners();
-  //   await loadBranchInfo();
-  //   await loadDoctors();
-  //   isLoading = false;
-  //   notifyListeners();
-  // }
   Future<void> refreshData() async {
-    // Не ставим isLoading = true, чтобы не мигал белый экран,
-    // RefreshIndicator сам покажет крутилку сверху
+
     try {
-      await loadBranchInfo(); // Обновляем время работы филиала
-      await loadDoctors();    // Обновляем список врачей
+      await loadBranchInfo();
+      await loadDoctors();
     } catch (e) {
       print("Ошибка при обновлении: $e");
     } finally {
-      notifyListeners(); // Уведомляем UI об изменениях
+      notifyListeners();
     }
   }
   Future<void> loadBranchInfo() async {
@@ -52,13 +43,13 @@ class DoctorsListModel extends BaseScreenModel {
   }
 
   Future<void> deleteDoctor(int id) async {
-    print("Попытка удаления врача с ID: $id"); // Для отладки
+    print("Попытка удаления врача с ID: $id");
     final res = await _rep.deleteDoctor(id);
 
     if (res.code == 200 || res.code == 204) {
       print("Удаление успешно");
       _doctors.removeWhere((d) => d.id == id);
-      notifyListeners(); // Генерирует обновление экрана
+      notifyListeners();
     } else {
       print("Ошибка API при удалении: ${res.code} - ${res.body}");
     }

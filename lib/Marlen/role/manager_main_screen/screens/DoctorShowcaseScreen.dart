@@ -7,10 +7,10 @@ class DoctorShowcaseScreen extends StatelessWidget {
   final bool isLoading;
   final String clinicName;
   final String branchAddress;
-  final String branchWorkingHours; // 1. Добавили поле
+  final String branchWorkingHours;
   final Function(DoctorDto) onEdit;
   final Function(int) onDelete;
-  final Future<void> Function() onRefresh; // 2. Добавили функцию для свайпа
+  final Future<void> Function() onRefresh;
 
   const DoctorShowcaseScreen({
     super.key,
@@ -18,10 +18,10 @@ class DoctorShowcaseScreen extends StatelessWidget {
     required this.isLoading,
     required this.clinicName,
     required this.branchAddress,
-    required this.branchWorkingHours, // 3. В конструктор
+    required this.branchWorkingHours,
     required this.onEdit,
     required this.onDelete,
-    required this.onRefresh, // 4. В конструктор
+    required this.onRefresh,
   });
 
   @override
@@ -33,7 +33,6 @@ class DoctorShowcaseScreen extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Блок информации о клинике и филиале
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(15),

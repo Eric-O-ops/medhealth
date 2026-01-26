@@ -26,12 +26,7 @@ class _FillDoctorProfileFormScreenState extends BaseScreen<FillDoctorProfileForm
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          title: Text("Профиль: ${viewModel.selectedDoctor!.lastName}"),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          elevation: 0
-      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -39,6 +34,8 @@ class _FillDoctorProfileFormScreenState extends BaseScreen<FillDoctorProfileForm
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text("Профиль: ${viewModel.selectedDoctor!.lastName}", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),),
+              SizedBox(height: 30),
               Center(
                 child: Stack(
                   children: [

@@ -1,4 +1,3 @@
-// Внутри OwnerRegistrationDto.dart (Изменяем структуру)
 
 class OwnerRegistrationDto {
   final String email;
@@ -23,18 +22,16 @@ class OwnerRegistrationDto {
     return {
       'name_clinic': clinicName,
 
-      // 🔥 ВЛОЖЕННЫЙ ОБЪЕКТ ПОЛЬЗОВАТЕЛЯ, как ожидает ClinicOwnerSerializer
       'user': {
-        // Обязательные поля CustomUser
         'email': email,
-        'password': password, // Для create_user
-        'password_user': password, // Для кастомного поля
+        'password': password,
+        'password_user': password,
         'first_name': firstName,
         'last_name': lastName,
         'phone_number': phoneNumber,
-        'date_of_birth': dateOfBirth, // Важно!
-        'address': 'г.Бишкек', // Предположим, что адрес опционален или пуст
-        'role': 'owner', // Жестко задаем роль!
+        'date_of_birth': dateOfBirth,
+        'address': 'г.Бишкек',
+        'role': 'owner',
       },
     };
   }

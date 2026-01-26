@@ -20,7 +20,7 @@ class FillDoctorProfileModel extends BaseScreenModel {
   String gender = 'male';
   List<String> selectedWorkDays = [];
   String branchOffDays = "";
-  String branchWorkingHours = ""; // Добавлено поле для хранения времени филиала
+  String branchWorkingHours = "";
 
   final List<String> specializations = [
     "Терапевт", "Хирург", "Стоматолог", "Кардиолог", "Педиатр", "ЛОР", "Невролог", "Другое",
@@ -60,7 +60,6 @@ class FillDoctorProfileModel extends BaseScreenModel {
       final resp = await _rep.getBranchConstraints();
       if (resp.code == 200) {
         branchOffDays = resp.body['off_days'] ?? "";
-        // Получаем время работы напрямую из филиала
         branchWorkingHours = resp.body['working_hours'] ?? "";
         print("DEBUG: Время филиала получено: $branchWorkingHours");
         notifyListeners();
@@ -117,7 +116,6 @@ class FillDoctorProfileModel extends BaseScreenModel {
       "description": descCtrl.text.trim(),
       "gender": gender,
       "off_days": selectedWorkDays.join(", "),
-      // Передаем рабочие часы, полученные от филиала
       "working_hours": branchWorkingHours,
     };
 

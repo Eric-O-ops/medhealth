@@ -13,6 +13,7 @@ import '../screens/DoctorShowcaseScreen.dart';
 import '../screens/DoctorsListScreen.dart';
 import '../screens/create/FillDoctorProfileFormScreen.dart';
 import '../screens/create/FillProfileSelectorScreen.dart';
+import '../screens/EditDoctorScreen.dart'; // Убедитесь, что путь верный
 import 'ManagerMainModel.dart';
 
 class ManagerMainScreen extends StatefulWidget {
@@ -29,7 +30,6 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
   @override
   void initState() {
     super.initState();
-    // Инициализируем модель списка врачей
     doctorsModel = DoctorsListModel();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -38,20 +38,15 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
         setState(() {
           _currentBranchId = args;
         });
-
-        // 1. Настраиваем главную модель (загрузка названия клиники и адреса)
         context.read<ManagerMainModel>().setupManager(args);
-
-        // 2. Настраиваем модель списка врачей (загрузка докторов филиала)
         doctorsModel.setup(args);
       }
     });
   }
 
-  // Используем функцию с передачей viewModel, чтобы данные клиники обновлялись корректно
   List<Widget> _getScreens(ManagerMainModel viewModel) {
     return [
-      // Внутри _getScreens:
+      // ПЕРВАЯ ВКЛАДКА: Витрина (Showcase)
       ChangeNotifierProvider.value(
         value: doctorsModel,
         child: Consumer<DoctorsListModel>(
@@ -60,24 +55,22 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
             isLoading: model.isLoading,
             clinicName: viewModel.clinicName,
             branchAddress: viewModel.branchAddress,
-            branchWorkingHours: model.branchWorkingHours, // Добавлено
-            onRefresh: () => model.refreshData(),        // Добавлено (свайп)
-            onEdit: (doc) => _openFillProfile(doc),
+            branchWorkingHours: model.branchWorkingHours,
+            onRefresh: () => model.refreshData(),
+            onEdit: (doc) => _openFillProfile(doc), // Здесь оставляем профиль (стаж/фото)
             onDelete: (id) => model.deleteDoctor(id),
           ),
         ),
       ),
 
-      // ВТОРАЯ ВКЛАДКА: Список управления (List)
+      // ВТОРАЯ ВКЛАДКА: Список управления (Редактирование ФИО/Email)
       ChangeNotifierProvider.value(
         value: doctorsModel,
         child: Consumer<DoctorsListModel>(
           builder: (_, model, __) => DoctorsListScreen(
             doctors: model.doctors,
-            // ВАЖНО: Убедись, что внутри DoctorsListScreen конструктор
-            // принимает именно эти 3 параметра
             onDelete: (id) => model.deleteDoctor(id),
-            onEdit: (doctor) => _openFillProfile(doctor),
+            onEdit: (doctor) => _openEditAccount(doctor), // ИЗМЕНЕНО: теперь ведет на ФИО/Email
           ),
         ),
       ),
@@ -86,7 +79,23 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
     ];
   }
 
+  // Метод для редактирования ФИО, Email и пароля
+  void _openEditAccount(DoctorDto doctor) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChangeNotifierProvider(
+          create: (_) => AddDoctorModel()..setBranchId(_currentBranchId),
+          child: EditDoctorScreen(
+            doctor: doctor,
+            onUpdated: () => doctorsModel.loadDoctors(),
+          ),
+        ),
+      ),
+    );
+  }
 
+  // Метод для редактирования медицинского профиля (стаж, цена, описание)
   void _openFillProfile(DoctorDto doctor) {
     Navigator.push(
       context,
@@ -139,7 +148,7 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
               ).then((_) => doctorsModel.loadDoctors());
             },
           ),
-          SizedBox(height: 30),
+          const SizedBox(height: 30),
           Center(
             child: TextButton.icon(
               onPressed: () {
@@ -195,17 +204,10 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 15, color: Colors.grey),
-                  ),
+                  Text(subtitle, style: const TextStyle(fontSize: 15, color: Colors.grey)),
                 ],
               ),
             ),
@@ -222,7 +224,7 @@ class _ManagerMainScreenState extends BaseScreen<ManagerMainScreen, ManagerMainM
       backgroundColor: AppColors.wight,
       body: IndexedStack(
         index: viewModel.selectedIndex,
-        children: _getScreens(viewModel), // Вызываем метод построения экранов
+        children: _getScreens(viewModel),
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.only(bottom: 10),

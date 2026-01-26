@@ -19,12 +19,7 @@ class _CreateDoctorAccountScreenState extends BaseScreen<CreateDoctorAccountScre
   Widget buildBody(BuildContext context, AddDoctorModel viewModel) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-          title: const Text("Создайте врача", style: TextStyle(fontSize: 24),),
-          elevation: 0,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black
-      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -32,6 +27,7 @@ class _CreateDoctorAccountScreenState extends BaseScreen<CreateDoctorAccountScre
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text("Создайте врача", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
               const SizedBox(height: 20),
               CustomTextFuild(label: "Имя", hintText: "Иван", controller: viewModel.firstNameController, validator: Validator.validateName),
               CustomTextFuild(label: "Фамилия", hintText: "Иванов", controller: viewModel.lastNameController, validator: Validator.validateName),

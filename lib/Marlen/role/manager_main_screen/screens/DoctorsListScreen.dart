@@ -53,7 +53,7 @@ class DoctorsListScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.blue),
-            onPressed: () => onEdit(doctor), // Используем переданный колбэк
+            onPressed: () => onEdit(doctor),// здесь надо чтобы переходил в экран редактирование фио и почты
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.red),

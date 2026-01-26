@@ -21,7 +21,7 @@ class BranchesModel extends BaseScreenModel {
     notifyListeners();
     try {
       final response = await _rep.fetchBranches();
-      print("ОТВЕТ ПО ФИЛИАЛАМ: ${response.code} | ТЕЛО: ${response.body}"); // <--- И ЭТО
+      print("ОТВЕТ ПО ФИЛИАЛАМ: ${response.code} | ТЕЛО: ${response.body}");
 
       if (response.code == 200 && response.body is List) {
         _branches = (response.body as List)

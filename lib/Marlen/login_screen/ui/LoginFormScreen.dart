@@ -7,8 +7,7 @@ import 'package:medhealth/styles/app_colors.dart';
 import 'package:provider/provider.dart';
 import '../../../common/BaseScreen.dart';
 import 'package:medhealth/common/validator/TextFieldValidator.dart';
-
-import '../../role/owner_main_screen/OwnerMainModel.dart';
+import 'package:medhealth/common/RAM.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,14 +23,30 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
   Widget buildBody(BuildContext context, LoginFormModel viewModel) {
     return Scaffold(
       backgroundColor: Colors.white,
-        body: Form(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close, color: AppColors.blue, size: 30),
+            onPressed: () {
+              // Входим как гость: очищаем RAM и переходим на главный экран
+              Ram().userId = "";
+              Navigator.pushReplacementNamed(context, '/userMain');
+            },
+          ),
+          const SizedBox(width: 10),
+        ],
+      ),
+      body: Form(
         key: _formKey,
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
-              SvgPicture.asset('assets/images/Logo.svg',height: 110),
-
-              SizedBox(height: 10),
+              SvgPicture.asset('assets/images/Logo.svg', height: 110),
+              const SizedBox(height: 10),
               const Text(
                 "Добро пожаловать",
                 style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
@@ -42,8 +57,6 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
                 style: TextStyle(fontSize: 16, color: AppColors.blue, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 15),
-
-              // Email
               CustomTextFuild(
                 label: "Email",
                 hintText: "example@gmail.com",
@@ -52,8 +65,6 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
                 onChanged: (value) => viewModel.email = value ?? '',
               ),
               const SizedBox(height: 20),
-
-              // Password
               CustomTextFieldPassword(
                 label: "Пароль",
                 hintText: "Введите пароль",
@@ -62,151 +73,89 @@ class _LoginScreenState extends BaseScreen<LoginScreen, LoginFormModel> {
                 onChanged: (value) => viewModel.password = value ?? '',
                 onTapSuffixIcon: viewModel.togglePasswordVisibility,
               ),
-              // Кнопка забыли пароль
-              Align(alignment: Alignment.centerRight,
+              Align(
+                alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () => Navigator.pushNamed(context, '/recovery'),
                   child: const Text(
                     "Забыли пароль?",
-                    style: TextStyle(color: Colors.blueAccent,
-                    fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              const SizedBox(height: 15,),
+              const SizedBox(height: 15),
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       final role = await viewModel.login();
-
                       if (role == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Неверный email или пароль"),
-                            backgroundColor: Colors.red,
-                          ),
+                          const SnackBar(content: Text("Неверный email или пароль"), backgroundColor: Colors.red),
                         );
                       } else {
-                        // Перенаправление по роли
-                        switch (role) {
-                          case "owner":
-                        final clinicId = viewModel.clinicOwnerId;
-                        print("ID для передачи через аргументы: $clinicId");
-
-                        if (clinicId != null) {
-                        // Передаем clinicId как аргумент
-                        Navigator.pushReplacementNamed(
-                        context,
-                        '/ownerMain',
-                        arguments: clinicId
-                        );
-                        }
-                        break;
-
-                          case "doctor":
-                            Navigator.pushReplacementNamed(context, '/doctorMain');
-                            break;
-
-                        // Внутри LoginScreen.dart, в методе onPressed кнопки "Войти":
-
-                          case "manager":
-                            final branchId = viewModel.managerBranchId;
-                            print("ID филиала для менеджера: $branchId");
-
-                            if (branchId != null) {
-                              Navigator.pushReplacementNamed(
-                                  context,
-                                  '/managerMain',
-                                  arguments: branchId // ТЕПЕРЬ МЫ ПЕРЕДАЕМ ID
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Ошибка: Менеджер не привязан к филиалу"), backgroundColor: Colors.orange)
-                              );
-                              // Даже если ID нет, можно пустить в профиль, но лучше выдать ошибку
-                            }
-                            break;
-
-                          case "admin":
-                            Navigator.pushReplacementNamed(context, '/adminMain');
-                            break;
-
-                          case "patient":
-                          case "user":
-                            Navigator.pushReplacementNamed(context, '/userMain');
-                            break;
-
-                          default:
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Неизвестная роль")),
-                            );
-                        }
+                        _handleNavigation(role, viewModel);
                       }
                     }
                   },
-                  child: const Text(
-                    "Войти",
-                    style: TextStyle(
-                        fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
+                  child: const Text("Войти", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
-
-              const SizedBox(height: 110),
-              const Text(
-                "У вас  нету аккаунта?",
-                style: TextStyle(fontSize: 16, color: AppColors.blue, fontWeight: FontWeight.w900),
-              ),const SizedBox(height: 20),
-
+              const SizedBox(height: 30),
+              const Text("У вас нету аккаунта?", style: TextStyle(fontSize: 16, color: AppColors.blue, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () => Navigator.pushNamed(context, '/registerPatient'),
-                  child: const Text(
-                    "Зарегистрироваться",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
+                  child: const Text("Зарегистрироваться", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              const SizedBox(height: 75),
+              const SizedBox(height: 30),
               TextButton(
                 onPressed: () => Navigator.pushNamed(context, '/helpsscreen'),
-                child: const Text(
-                  "Помощь",
-                  style: TextStyle(
-                    color: AppColors.blue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,        // подчёркивание
-                    decorationColor: AppColors.blue,              // цвет подчёркивания
-                    decorationThickness: 1,                       // толщина линии
-                  ),
-                ),
+                child: const Text("Помощь", style: TextStyle(color: AppColors.blue, fontSize: 16, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _handleNavigation(String role, LoginFormModel viewModel) {
+    switch (role) {
+      case "admin":
+        Navigator.pushReplacementNamed(context, '/adminMain');
+        break;
+      case "owner":
+        if (viewModel.clinicOwnerId != null) {
+          Navigator.pushReplacementNamed(context, '/ownerMain', arguments: viewModel.clinicOwnerId);
+        }
+        break;
+      case "doctor":
+        Navigator.pushReplacementNamed(context, '/doctorMain');
+        break;
+      case "manager":
+        if (viewModel.managerBranchId != null) {
+          Navigator.pushReplacementNamed(context, '/managerMain', arguments: viewModel.managerBranchId);
+        }
+        break;
+      case "patient":
+      case "user":
+        Navigator.pushReplacementNamed(context, '/userMain');
+        break;
+    }
   }
 }

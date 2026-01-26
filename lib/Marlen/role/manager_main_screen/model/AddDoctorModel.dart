@@ -33,13 +33,11 @@ class AddDoctorModel extends BaseScreenModel {
     }
   }
 
-  // ОБНОВЛЕННЫЙ МЕТОД: Исправлена ошибка "красного" метода и логика ответа
   Future<bool> updateDoctorAccount(int userId, Map<String, dynamic> data) async {
     isLoading = true;
     notifyListeners();
 
     try {
-      // userId берется из DoctorDto (это id из CustomUser)
       final response = await _rep.updateUserAccount(userId, data);
 
       if (response.code == 200 || response.code == 204) {

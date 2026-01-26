@@ -3,7 +3,6 @@ import '../../../common/BaseApi.dart';
 // Предполагаем, что BaseScreenModel находится здесь
 import '../../../common/BaseScreenModel.dart';
 
-// 1. Наследуем от BaseScreenModel
 class RegisterPatientModel extends BaseScreenModel {
 
   String firstName = "";
@@ -12,7 +11,7 @@ class RegisterPatientModel extends BaseScreenModel {
   String email = "";
   String phone = "";
   String address = "";
-  String password = ""; // Основной пароль
+  String password = "";
   String passwordUser = ""; //
 
   bool hiddenPassword = true;
@@ -26,10 +25,8 @@ class RegisterPatientModel extends BaseScreenModel {
   }
 
   Future<bool> register(GlobalKey<FormState> formKey) async {
-    // 2. Используем ключ, переданный из UI (State)
     if (!formKey.currentState!.validate()) return false;
 
-    // 3. Устанавливаем isLoading = true перед началом запроса
     isLoading = true;
 
     final api = BaseApi();
@@ -44,11 +41,9 @@ class RegisterPatientModel extends BaseScreenModel {
           "phone_number": phone,
           "address": address,
           "email": email,
-          "date_of_birth": dateOfBirth, // ИСПРАВЛЕНО
-
-          // Отправляем основной пароль (P1) в оба поля, как просил друг
+          "date_of_birth": dateOfBirth,
           "password": password,
-          "password_user": password, // 🔥 Отправляем P1 в password_user тоже
+          "password_user": password,
 
           "role": "patient"
         },
@@ -57,12 +52,9 @@ class RegisterPatientModel extends BaseScreenModel {
       success = response.code == 201;
 
     } catch (e) {
-      // 4. Обрабатываем ошибку, используя встроенные флаги BaseScreenModel
       isError = true;
-      // В реальном приложении: errorMessage = e.toString();
       success = false;
     } finally {
-      // 5. Всегда устанавливаем isLoading = false
       isLoading = false;
     }
 

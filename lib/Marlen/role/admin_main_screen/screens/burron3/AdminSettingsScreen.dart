@@ -3,8 +3,10 @@ import 'package:medhealth/Marlen/role/admin_main_screen/screens/burron3/AddAdmin
 import 'package:medhealth/Marlen/role/admin_main_screen/screens/burron3/ManualAddClinicModel.dart';
 import 'package:medhealth/styles/app_colors.dart';
 import 'package:provider/provider.dart';
+import '../../../../login_screen/ui/LoginFormModel.dart';
+import '../../../../login_screen/ui/LoginFormScreen.dart';
 import 'AddAdminScreen.dart';
-import 'ManualAddClinicScreen.dart'; // Создадим ниже
+import 'ManualAddClinicScreen.dart';
 
 class AdminSettingsScreen extends StatelessWidget {
   const AdminSettingsScreen({super.key});
@@ -50,6 +52,23 @@ class AdminSettingsScreen extends StatelessWidget {
                   child: ManualAddClinicScreen(),
                 ),
               ),
+            ),
+          ),
+          Center(
+            child: TextButton.icon(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (context) => ChangeNotifierProvider(
+                      create: (_) => LoginFormModel(),
+                      child: const LoginScreen(),
+                    ),
+                  ),
+                      (route) => false,
+                );
+              },
+              icon: const Icon(Icons.logout, color: Colors.red),
+              label: const Text("Выйти из аккаунта", style: TextStyle(color: Colors.red)),
             ),
           ),
         ],

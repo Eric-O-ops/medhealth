@@ -40,13 +40,11 @@ class DoctorDto {
   factory DoctorDto.fromJson(Map<String, dynamic> json) {
     String? rawPhoto = json['photo'] ?? json['photo_url'];
 
-    // Формируем полный URL для картинки
     String? fullPhotoUrl;
     if (rawPhoto != null && rawPhoto.isNotEmpty) {
       if (rawPhoto.startsWith('http')) {
         fullPhotoUrl = rawPhoto;
       } else {
-        // Замените на IP вашего сервера, если тестируете не на эмуляторе
         fullPhotoUrl = "http://127.0.0.1:8000$rawPhoto";
       }
     }
@@ -54,7 +52,6 @@ class DoctorDto {
     return DoctorDto(
       id: json['id'] ?? 0,
       userId: json['user']?['id'] ?? 0,
-      // Исправляем получение branchId, так как в JSON может прийти объект или ID
       branchId: json['branch'] is int
           ? json['branch']
           : (json['branch_id'] ?? (json['branch']?['id'] ?? 0)),
@@ -71,7 +68,6 @@ class DoctorDto {
       gender: json['gender'] ?? 'male',
       age: json['age'] ?? 25,
       photoUrl: fullPhotoUrl,
-      // Подтягиваем праздники из нового поля сериализатора
       branchDescription: json['branch_description'] ?? "",
     );
   }

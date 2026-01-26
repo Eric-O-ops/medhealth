@@ -57,7 +57,6 @@ class DoctorScheduleModel extends BaseScreenModel {
     notifyListeners();
   }
 
-// ... внутри класса DoctorScheduleModel ...
   Future<void> saveSchedule(VoidCallback onSuccess) async {
     if (selectedDoctor == null) return;
 
@@ -69,7 +68,6 @@ class DoctorScheduleModel extends BaseScreenModel {
       "off_days": selectedDays.join(", "),
     };
 
-    // Исправлено: ManagerRep.updateDoctorProfile теперь ожидает 3 аргумента (id, data, file)
     final resp = await _rep.updateDoctorProfile(selectedDoctor!.id, data, null);
 
     if (resp.code == 200 || resp.code == 204) {

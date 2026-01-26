@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:medhealth/Marlen/role/user_main/models/MyAppointmentsModel.dart';
 import 'package:medhealth/Marlen/role/user_main/screens/ClinicsListScreen.dart';
+import 'package:medhealth/Marlen/role/user_main/screens/MyAppointmentsScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:medhealth/common/BaseScreen.dart';
 import 'package:medhealth/styles/app_colors.dart';
 import '../models/ClinicListModel.dart';
+import '../models/PatientProfileModel.dart';
+import '../screens/PatientProfileScreen.dart';
 import 'UserMainModel.dart';
 
 class UserMainScreen extends StatefulWidget {
@@ -17,20 +21,28 @@ class _UserMainScreenState extends BaseScreen<UserMainScreen, UserMainModel> {
   late List<Widget> _screens;
   late ClinicListModel _clinicListModel;
 
+  // Внутри _UserMainScreenState
   @override
   void initState() {
     super.initState();
-
     _clinicListModel = ClinicListModel();
 
     _screens = [
       ChangeNotifierProvider.value(
         value: _clinicListModel,
-        child: ClinicsListScreen(),
+        child: const ClinicsListScreen(),
       ),
-      const Center(child: Text("Записи", style: TextStyle(fontSize: 20))),
-      const Center(child: Text("История", style: TextStyle(fontSize: 20))),
-      const Center(child: Text("Профиль", style: TextStyle(fontSize: 20))),
+      ChangeNotifierProvider(
+        create: (_) => MyAppointmentsModel(),
+        child: const MyAppointmentsScreen(),
+      ),
+      const Center(child: Text("История")),
+
+      // Вкладка Профиля
+      ChangeNotifierProvider(
+        create: (_) => PatientProfileModel(),
+        child: const PatientProfileScreen(),//горит красным
+      ),
     ];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
